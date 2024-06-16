@@ -1,0 +1,22 @@
+<?php
+
+namespace [namespace];
+
+use App\Http\Livewire\BaseComponent;
+
+class [class] extends BaseComponent
+{
+    public function getConfigProperty()
+    {
+        return config('theme.dashboard-layout-config');
+    }
+
+    public function render()
+    {
+        $title = ['title' => ''];
+
+        $config = array_merge($title, $this->config);
+
+        return $this->baseView('[view]', $config);
+    }
+}
