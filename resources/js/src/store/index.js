@@ -13,7 +13,7 @@ import teacher from "./modules/teacher";
 import authentication from "./modules/authentication";
 import curriculum from "./modules/curriculum";
 import scheduleLessonHour from "./modules/schedule-lesson-hour";
-
+import scheduleLesson from "./modules/schedule-lesson";
 
 const listModules = {
     authentication,
@@ -28,11 +28,11 @@ const listModules = {
     teacher,
     curriculum,
     scheduleLessonHour,
+    scheduleLesson,
 };
-
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    modules: listModules
+    modules: listModules,
 });

@@ -17,6 +17,6 @@ class ScheduleLessonRepository extends BaseRepository
 
   public function index()
   {
-    return $this->model->orderBy('created_at', 'desc')->get();
+    return $this->model->with(['semester', 'classroom'])->orderBy('created_at', 'desc')->get();
   }
 }

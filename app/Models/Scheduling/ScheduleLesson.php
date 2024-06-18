@@ -28,9 +28,4 @@ class ScheduleLesson extends Base
    {
       return $this->belongsTo(Classroom::class, 'classroom_id');
    }
-
-   public function curiculum()
-   {
-      return $this->belongsTo(CurriculumLesson::class, 'curriculum_id');
-   }
 }
