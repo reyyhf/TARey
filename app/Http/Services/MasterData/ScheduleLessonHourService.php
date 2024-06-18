@@ -8,6 +8,7 @@ use App\Http\Repositories\MasterData\ScheduleDayRepository;
 use App\Http\Repositories\MasterData\ScheduleLessonHourRepository;
 use App\Http\Resources\MasterData\ScheduleLessonHourResource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ScheduleLessonHourService
 {
@@ -47,7 +48,7 @@ class ScheduleLessonHourService
                 $existedHour = $this->repository->findExistedHour(
                     $inputData['schedule_day_id'],
                     $duration['started_at']
-                );
+                )->first();
 
                 if ($existedHour) {
                     DB::rollBack();
@@ -70,7 +71,7 @@ class ScheduleLessonHourService
                 $scheduleLessonHour = $this->repository->store($duration);
             }
 
-            if (! $scheduleLessonHour) {
+            if (!$scheduleLessonHour) {
                 DB::rollBack();
                 throw new ErrorAPIException('Data Gagal Ditambahkan', 500);
             }
@@ -106,7 +107,7 @@ class ScheduleLessonHourService
 
             $scheduleLessonHour = $this->repository->update($id, $inputData);
 
-            if (! $scheduleLessonHour) {
+            if (!$scheduleLessonHour) {
                 DB::rollBack();
                 throw new ErrorAPIException('Data Gagal Diubah', 500);
             }
@@ -121,7 +122,7 @@ class ScheduleLessonHourService
     {
         $scheduleLessonHour = $this->repository->destroy($id);
 
-        if (! $scheduleLessonHour) {
+        if (!$scheduleLessonHour) {
             throw new ErrorAPIException('Data Gagal Dihapus', 500);
         }
 
