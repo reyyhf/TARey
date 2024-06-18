@@ -68,7 +68,7 @@ export default {
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: white;
+    background: transparent;
 }
 
 /* Handle */
