@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('id')->primary()->index();
             $table->string('semester_id')->index();
             $table->string('classroom_id')->index();
-            $table->string('curriculum_id')->index();
+            $table->string('curriculum_type');
             $table->boolean('status')->default(false);
             $table->timestamps();
             $table->softDeletes();

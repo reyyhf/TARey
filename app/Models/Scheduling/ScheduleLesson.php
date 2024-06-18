@@ -14,7 +14,7 @@ class ScheduleLesson extends Base
    protected $fillable = [
       'semester_id',
       'classroom_id',
-      'curriculum_id',
+      'curriculum_type',
       'status'
    ];
 

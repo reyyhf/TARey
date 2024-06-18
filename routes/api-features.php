@@ -122,4 +122,5 @@ Route::prefix('schedule-lesson-hour')->name('schedule-lesson-hour.')->group(func
 // Schedule Lesson
 Route::prefix('schedule-lesson')->name('schedule-lesson.')->group(function () {
     Route::get('/', [ScheduleLessonController::class, 'index'])->name('index');
+    Route::post('/store', [ScheduleLessonController::class, 'store'])->name('store');
 });

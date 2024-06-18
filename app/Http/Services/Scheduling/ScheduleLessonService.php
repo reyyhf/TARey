@@ -26,4 +26,13 @@ class ScheduleLessonService
 
         return $this->resultResponse('success', 'Data Berhasil Ditampilkan', 200, $response);
     }
+
+    public function store($inputData)
+    {
+        $scheduleLesson = $this->repository->store($inputData);
+
+        $response = $scheduleLesson;
+
+        return $this->resultResponse('success', 'Data Berhasil Dibuat', 200, $response);
+    }
 }
