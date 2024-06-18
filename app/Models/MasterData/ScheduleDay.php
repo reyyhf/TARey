@@ -30,6 +30,6 @@ class ScheduleDay extends Base
         $startedYear = optional($this->semester)->started_year;
         $endedYear = optional($this->semester)->ended_year;
 
-        return $startedYear.' / '.$endedYear;
+        return $startedYear . ' / ' . $endedYear;
     }
 }

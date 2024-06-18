@@ -6,6 +6,7 @@ use App\Http\Controllers\API\MasterData\Lesson\LessonCategoryController;
 use App\Http\Controllers\API\MasterData\Lesson\LessonController;
 use App\Http\Controllers\API\MasterData\Schedule\ScheduleDayController;
 use App\Http\Controllers\API\MasterData\Schedule\ScheduleLessonHourController;
+use App\Http\Controllers\API\Scheduling\ScheduleLessonController;
 use App\Http\Controllers\API\MasterData\SemesterController;
 use App\Http\Controllers\API\MasterData\User\RoleController;
 use App\Http\Controllers\API\MasterData\User\UserController;
@@ -116,4 +117,9 @@ Route::prefix('schedule-lesson-hour')->name('schedule-lesson-hour.')->group(func
     Route::get('/{id}', [ScheduleLessonHourController::class, 'show'])->name('show');
     Route::put('/update/{id}', [ScheduleLessonHourController::class, 'update'])->name('update');
     Route::delete('/destroy/{id}', [ScheduleLessonHourController::class, 'destroy'])->name('destroy');
+});
+
+// Schedule Lesson
+Route::prefix('schedule-lesson')->name('schedule-lesson.')->group(function () {
+    Route::get('/', [ScheduleLessonController::class, 'index'])->name('index');
 });

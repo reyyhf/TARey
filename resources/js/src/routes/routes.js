@@ -170,10 +170,10 @@ const routes = [
             },
             {
                 path: "jadwal-mata-pelajaran",
-                name: "schedule-subject",
+                name: "schedule-lesson",
                 component: () =>
                     import(
-                        "@Components/__pages/__dashboard/scheduling/schedule-subject/Index.vue"
+                        "@Components/__pages/__dashboard/scheduling/schedule-lesson/Index.vue"
                     ),
                 meta: {
                     auth: true,

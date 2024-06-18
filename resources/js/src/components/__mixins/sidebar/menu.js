@@ -75,7 +75,7 @@ const menus = [
             {
                 title: "Jadwal Mata Pelajaran",
                 icon: "mdi-calendar-clock-outline",
-                route: "schedule-subject",
+                route: "schedule-lesson",
             },
             {
                 title: "Penjadwalan Mata Pelajaran",
