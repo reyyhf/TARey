@@ -28,13 +28,43 @@ const scheduleLessonMixin = {
           sortable: false,
         },
       ],
-      payload: {},
+      classrooms: [],
+      curriculum_types: [
+        { id: 'X IPA', name: 'X IPA' },
+        { id: 'XI IPA', name: 'XI IPA' },
+        { id: 'XII IPA', name: 'XII IPA' },
+        { id: 'X IPS', name: 'X IPS' },
+        { id: 'XI IPS', name: 'XI IPS' },
+        { id: 'XII IPS', name: 'XII IPS' },
+      ],
+      payload: {
+        classroom_id: null,
+        curiculum_type: null,
+      },
     }
   },
+  async created() {
+    this.isLoading = true
 
+    await this.fetchClassroomsData()
+      .then((result) => {
+        this.classrooms = result.data.data
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+      .finally(() => {
+        this.isLoading = false
+      })
+  },
   methods: {
     ...mapActions({
       fetchData: 'scheduleLesson/fetchScheduleLessons',
+      storeData: 'scheduleLesson/storeScheduleLesson',
+      showData: 'scheduleLesson/fetchDetailScheduleLesson',
+      updateData: 'scheduleLesson/updateScheduleLesson',
+      destroyData: 'scheduleLesson/destroyScheduleLesson',
+      fetchClassroomsData: 'classroom/fetchClassroom',
     }),
   },
 }

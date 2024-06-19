@@ -19,4 +19,9 @@ class ScheduleLessonRepository extends BaseRepository
   {
     return $this->model->with(['semester', 'classroom'])->orderBy('created_at', 'desc')->get();
   }
+
+  public function findScheduleLesson($id)
+  {
+    return $this->model->with(['semester', 'classroom'])->where('id', $id)->first();
+  }
 }
