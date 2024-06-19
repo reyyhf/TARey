@@ -21,6 +21,7 @@ export default {
         v-on:edit-data="view"
         v-on:destroy-data="showDestroyModal"
         :withLoading="isLoading"
+        :withDetail="true"
         :headerData="headers"
         :result="results"
       >
