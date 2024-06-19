@@ -19,4 +19,9 @@ class SemesterRepository extends BaseRepository
     {
         return $this->model->orderBy('started_year', 'asc')->get();
     }
+
+    public function findActiveSemester()
+    {
+        return $this->model->where('is_active', true)->first();
+    }
 }

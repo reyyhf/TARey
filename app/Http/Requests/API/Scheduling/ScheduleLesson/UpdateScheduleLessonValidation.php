@@ -4,7 +4,7 @@ namespace App\Http\Requests\API\Scheduling\ScheduleLesson;
 
 use App\Http\Requests\API\BaseRequest;
 
-class CreateScheduleLessonValidation extends BaseRequest
+class UpdateScheduleLessonValidation extends BaseRequest
 {
   /**
    * Get the validation rules that apply to the request.

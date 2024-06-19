@@ -123,4 +123,7 @@ Route::prefix('schedule-lesson-hour')->name('schedule-lesson-hour.')->group(func
 Route::prefix('schedule-lesson')->name('schedule-lesson.')->group(function () {
     Route::get('/', [ScheduleLessonController::class, 'index'])->name('index');
     Route::post('/store', [ScheduleLessonController::class, 'store'])->name('store');
+    Route::get('/{id}', [ScheduleLessonController::class, 'show'])->name('show');
+    Route::put('/update/{id}', [ScheduleLessonController::class, 'update'])->name('update');
+    Route::delete('/destroy/{id}', [ScheduleLessonController::class, 'destroy'])->name('destroy');
 });
