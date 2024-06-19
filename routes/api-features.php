@@ -11,6 +11,7 @@ use App\Http\Controllers\API\MasterData\SemesterController;
 use App\Http\Controllers\API\MasterData\User\RoleController;
 use App\Http\Controllers\API\MasterData\User\UserController;
 use App\Http\Controllers\API\MasterData\User\UserStatusController;
+use App\Http\Controllers\API\Scheduling\ScheduleLessonItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -126,4 +127,13 @@ Route::prefix('schedule-lesson')->name('schedule-lesson.')->group(function () {
     Route::get('/{id}', [ScheduleLessonController::class, 'show'])->name('show');
     Route::put('/update/{id}', [ScheduleLessonController::class, 'update'])->name('update');
     Route::delete('/destroy/{id}', [ScheduleLessonController::class, 'destroy'])->name('destroy');
+});
+
+// Schedule Lesson Item
+Route::prefix('schedule-lesson-item')->name('schedule-lesson.')->group(function () {
+    Route::get('/', [ScheduleLessonItemController::class, 'index'])->name('index');
+    Route::post('/store', [ScheduleLessonItemController::class, 'store'])->name('store');
+    Route::get('/{id}', [ScheduleLessonItemController::class, 'show'])->name('show');
+    Route::put('/update/{id}', [ScheduleLessonItemController::class, 'update'])->name('update');
+    Route::delete('/destroy/{id}', [ScheduleLessonItemController::class, 'destroy'])->name('destroy');
 });
