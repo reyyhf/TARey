@@ -65,6 +65,10 @@ export default {
       </v-row>
     </template>
 
+    <template v-slot:item.number="{ item, index }">
+      {{ index + 1 }}
+    </template>
+
     <template v-slot:item.curricular="{ item }">
       <div
         class="d-grid my-2"
