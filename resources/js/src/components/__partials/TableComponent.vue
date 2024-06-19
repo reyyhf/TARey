@@ -23,6 +23,10 @@ export default {
             type: Boolean,
             default: false
         },
+        isSearchHidden: {
+            type: Boolean,
+            default : false
+        }
     },
     computed: {
         hideFooterAction() {
@@ -40,7 +44,7 @@ export default {
         <template v-slot:top>
             <v-row>
                 <v-col cols="6">
-                    <v-text-field outlined dense v-model="search" label="Cari Data" class="mx-4 pt-4"></v-text-field>
+                    <v-text-field outlined dense v-model="search" label="Cari Data" class="mx-4 pt-4" :class="{ 'd-none': isSearchHidden }"></v-text-field>
                 </v-col>
 
                 <v-col cols="6" v-if="withCustomFilter">
