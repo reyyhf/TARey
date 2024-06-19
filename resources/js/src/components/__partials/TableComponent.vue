@@ -24,6 +24,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isSearchHidden: {
+            type: Boolean,
+            default : false
+    }
   },
   computed: {
     hideFooterAction() {
@@ -31,40 +35,6 @@ export default {
       return false
     },
   },
-    name: 'TableComponent',
-    data: () => ({
-        search: '',
-        emptyDataText: 'Data tidak ditemukan',
-    }),
-    props: {
-        itemKey: String,
-        headerData: Array,
-        icon: String,
-        withLoading: Boolean,
-        withViewData: Boolean,
-        withDestroyData: {
-            type: Boolean,
-            default: true,
-        },
-        result: Array,
-        editData: Function,
-        destroyData: Function,
-        viewData: Function,
-        withCustomFilter: {
-            type: Boolean,
-            default: false
-        },
-        isSearchHidden: {
-            type: Boolean,
-            default : false
-        }
-    },
-    computed: {
-        hideFooterAction() {
-            if (this.result.length <= 10) return true;
-            return false;
-        }
-    }
 }
 </script>
 
