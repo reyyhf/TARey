@@ -11,6 +11,7 @@ export default {
     icon: String,
     withLoading: Boolean,
     withViewData: Boolean,
+    withDetail: Boolean,
     withDestroyData: {
       type: Boolean,
       default: true,
@@ -128,6 +129,15 @@ export default {
         >
           <v-icon left> mdi-eye </v-icon>
           Lihat
+        </v-btn>
+        <v-btn
+          v-if="withDetail"
+          outlined
+          color="info"
+          :to="{ name: `detail-${$route.name}`, params: { id: item.id } }"
+        >
+          <v-icon left> mdi-eye </v-icon>
+          Detail
         </v-btn>
         <v-btn
           outlined
