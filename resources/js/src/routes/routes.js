@@ -240,7 +240,7 @@ const routes = [
         name: 'detail-schedule-lesson',
         component: () =>
           import(
-            '@Components/__pages/__dashboard/scheduling/detail-schedule-lesson/Index.vue'
+            '@Components/__pages/__dashboard/scheduling/schedule-lesson-detail/Index.vue'
           ),
         meta: {
           auth: true,

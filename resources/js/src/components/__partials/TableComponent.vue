@@ -114,9 +114,16 @@ export default {
     </template>
 
     <template v-slot:item.semester_year="{ item }">
-      <span
-        >{{ item.semester.started_year }} - {{ item.semester.ended_year }}</span
-      >
+      <span>
+        {{ item.semester.started_year }} - {{ item.semester.ended_year }}
+      </span>
+    </template>
+    <template v-slot:item.schedule_lesson_hour="{ item }">
+      <span>
+        Jam Ke-{{ item.schedule_lesson_hour.started_at }} ({{
+          item.schedule_lesson_hour.started_duration
+        }}-{{ item.schedule_lesson_hour.ended_duration }})
+      </span>
     </template>
 
     <template v-slot:item.actions="{ item }">
