@@ -55,6 +55,11 @@ const scheduleLessonItemMixin = {
     }
   },
   watch: {
+    'payload.schedule_lesson_id': async function () {
+      if (!this.payload.schedule_lesson_id) {
+        this.payload.schedule_lesson_id = this.$route.params.id
+      }
+    },
     'payload.lesson_id': async function () {
       this.teachers = []
 
@@ -114,11 +119,14 @@ const scheduleLessonItemMixin = {
   methods: {
     ...mapActions({
       storeData: 'scheduleLessonItem/storeScheduleLessonItem',
+      showData: 'scheduleLessonItem/fetchDetailScheduleLessonItem',
       fetchData: 'scheduleLessonItem/fetchScheduleLessonItems',
       fetchLessons: 'lesson/fetchLesson',
       fetchTeachers: 'teacher/fetchTeacher',
       fetchScheduleDays: 'scheduleDay/fetchScheduleDay',
       fetchLessonHours: 'scheduleLessonHour/fetchScheduleLessonHour',
+      updateData: 'scheduleLessonItem/updateScheduleLessonItem',
+      destroyData: 'scheduleLessonItem/destroyScheduleLessonItem',
     }),
   },
 }

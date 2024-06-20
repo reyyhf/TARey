@@ -74,5 +74,23 @@ export default {
         </template>
       </update-or-create-component>
     </card-component>
+
+    <dialog-component
+      v-on:confirm-action="destroy"
+      confirmText="Hapus"
+      title="Hapus Data"
+      v-model="dialog"
+      v-on:close-dialog="dialog = false"
+    >
+      <template v-slot:message>
+        <v-container>
+          <p class="text-center font-weight-bold">
+            Apakah anda yakin akan menghapus data ini ?
+          </p>
+        </v-container>
+      </template>
+    </dialog-component>
+
+    <alert-component ref="alert"></alert-component>
   </main>
 </template>

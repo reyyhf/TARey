@@ -14,11 +14,10 @@ class UpdateScheduleLessonValidation extends BaseRequest
   public function rules()
   {
     return [
-      'classroom_id' => 'required|uuid',
-      'curriculum_type' => [
-        'required',
-        'regex:/^(X|XI|XII) (IPA|IPS)/'
-      ]
+      'lesson_id' => 'required|uuid',
+      'teacher_id' => 'required|uuid',
+      'schedule_lesson_id' => 'required|uuid',
+      'schedule_lesson_hour_id' => 'required|uuid',
     ];
   }
 }
