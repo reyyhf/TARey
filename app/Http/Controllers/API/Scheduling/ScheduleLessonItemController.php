@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Scheduling\ScheduleLesson\CreateScheduleLessonItemValidation;
 use App\Http\Requests\API\Scheduling\ScheduleLesson\UpdateScheduleLessonValidation;
 use App\Http\Services\Scheduling\ScheduleLessonItemService;
+use Illuminate\Http\Request;
 
 class ScheduleLessonItemController extends Controller
 {
@@ -16,9 +17,10 @@ class ScheduleLessonItemController extends Controller
         $this->service = $service;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $scheduleLessons = $this->service->index();
+        $scheduleLessonId = $request->input('schedule_lesson_id');
+        $scheduleLessons = $this->service->index($scheduleLessonId);
 
         return $this->serviceResponseHandler($scheduleLessons);
     }

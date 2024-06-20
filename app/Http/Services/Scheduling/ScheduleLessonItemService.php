@@ -6,6 +6,7 @@ use App\Exceptions\ErrorAPIException;
 use App\Helpers\ApiResponseTrait;
 use App\Http\Repositories\Scheduling\ScheduleLessonItemRepository;
 use App\Http\Requests\API\Scheduling\ScheduleLesson\CreateScheduleLessonItemValidation;
+use Illuminate\Support\Facades\Log;
 
 class ScheduleLessonItemService
 {
@@ -18,11 +19,12 @@ class ScheduleLessonItemService
     $this->repository = $repository;
   }
 
-  public function index()
+  public function index($scheduleLessonId)
   {
-    $scheduleLessonItems = $this->repository->index();
+    Log::info($scheduleLessonId);
+    $scheduleLessonItems = $this->repository->findScheduleLessonItems($scheduleLessonId);
 
-    return $this->resultResponse('success', 'Data berhasil didapatkan 😂', 200, $scheduleLessonItems);
+    return $this->resultResponse('success', 'Data berhasil didapatkan', 200, $scheduleLessonItems);
   }
 
   public function show($id)

@@ -20,6 +20,11 @@ class ScheduleLessonItemRepository extends BaseRepository
     return $this->model->with(['lesson', 'teacher', 'scheduleLesson', 'scheduleLessonHour.scheduleDay'])->orderBy('created_at', 'desc')->get();
   }
 
+  public function findScheduleLessonItems($scheduleLessonId)
+  {
+    return $this->model->with(['lesson', 'teacher', 'scheduleLesson', 'scheduleLessonHour.scheduleDay'])->where('schedule_lesson_id', $scheduleLessonId)->orderBy('created_at', 'desc')->get();
+  }
+
   public function findScheduleLessonItem($id)
   {
     return $this->model->with(['lesson', 'teacher', 'scheduleLesson', 'scheduleLessonHour.scheduleDay'])->where('id', $id)->first();
