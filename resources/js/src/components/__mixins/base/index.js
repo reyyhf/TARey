@@ -26,7 +26,7 @@ const indexMixins = {
     async loadData() {
       this.isLoading = true
 
-      await this.fetchData()
+      await this.fetchData(this.params)
         .then((result) => {
           this.results = result.data.data
         })
@@ -62,7 +62,7 @@ const indexMixins = {
         .then((response) => {
           let result = response.data.meta
 
-          this.$refs.alert.show(result.status, result.message)
+          this?.$refs?.alert?.show(result.status, result.message)
 
           setTimeout(() => {
             this.loadData()
@@ -71,7 +71,7 @@ const indexMixins = {
         .catch((error) => {
           let result = error.response.data.meta
 
-          this.$refs.alert.show(result.status, result.message)
+          this?.$refs?.alert?.show(result.status, result.message)
         })
         .finally(() => {
           this.dialog = false
@@ -83,7 +83,7 @@ const indexMixins = {
         .then((response) => {
           let result = response.data.meta
 
-          this.$refs.alert.show(result.status, result.message)
+          this?.$refs?.alert?.show(result.status, result.message)
 
           setTimeout(() => {
             this.loadData()
@@ -101,7 +101,7 @@ const indexMixins = {
         .then((response) => {
           let result = response.data.meta
 
-          this.$refs.alert.show(result.status, result.message)
+          this?.$refs?.alert?.show(result.status, result.message)
 
           setTimeout(() => {
             this.loadData()
@@ -111,7 +111,7 @@ const indexMixins = {
         .catch((error) => {
           let result = error.response.data.meta
 
-          this.$refs.alert.show(result.status, result.message)
+          this?.$refs?.alert?.show(result.status, result.message)
         })
     },
 

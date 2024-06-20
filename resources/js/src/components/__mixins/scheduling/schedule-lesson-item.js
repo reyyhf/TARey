@@ -49,6 +49,9 @@ const scheduleLessonItemMixin = {
         schedule_day_id: null,
         schedule_lesson_hour_id: null,
       },
+      params: {
+        schedule_lesson_id: this.$route.params.id,
+      },
     }
   },
   watch: {
