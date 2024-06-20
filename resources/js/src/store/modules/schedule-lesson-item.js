@@ -1,6 +1,6 @@
 import { apiHandler } from '@/plugins/api-handler'
 
-const scheduleLessonApiUrl = 'schedule-lesson-item'
+const scheduleLessonItemApiUrl = 'schedule-lesson-item'
 
 const scheduleLessonItem = {
   namespaced: true,
@@ -19,10 +19,22 @@ const scheduleLessonItem = {
     },
   },
   actions: {
+    storeScheduleLessonItem(_context, parameter) {
+      return new Promise((resolve, reject) => {
+        apiHandler
+          .post(`${scheduleLessonItemApiUrl}/store`, parameter)
+          .then((response) => {
+            resolve(response)
+          })
+          .catch((errors) => {
+            reject(errors)
+          })
+      })
+    },
     fetchScheduleLessonItems(context, parameter) {
       return new Promise((resolve, reject) => {
         apiHandler
-          .get(`${scheduleLessonApiUrl}`, { params: parameter })
+          .get(`${scheduleLessonItemApiUrl}`, { params: parameter })
           .then((response) => {
             context.commit('setScheduleLessonItems', response.data.data)
             resolve(response)

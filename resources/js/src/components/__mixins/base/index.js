@@ -92,7 +92,7 @@ const indexMixins = {
         })
         .catch((error) => {
           let result = error.response.data.meta
-          this.$refs.alert.show(result.status, result.message)
+          this?.$refs?.alert?.show(result.status, result.message)
         })
     },
 
