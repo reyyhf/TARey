@@ -38,6 +38,7 @@ const scheduleLessonItemMixin = {
           sortable: false,
         },
       ],
+      scheduleLesson: null,
       lessons: [],
       teachers: [],
       days: [],
@@ -115,6 +116,14 @@ const scheduleLessonItemMixin = {
       .finally(() => {
         this.isLoading = false
       })
+
+    this.fetchScheduleLesson({ id: this.$route.params.id })
+      .then((result) => {
+        this.scheduleLesson = result.data.data
+      })
+      .catch((err) => {
+        alert(err?.message || 'data Tidak ditemukan')
+      })
   },
   methods: {
     ...mapActions({
@@ -127,6 +136,7 @@ const scheduleLessonItemMixin = {
       fetchLessonHours: 'scheduleLessonHour/fetchScheduleLessonHour',
       updateData: 'scheduleLessonItem/updateScheduleLessonItem',
       destroyData: 'scheduleLessonItem/destroyScheduleLessonItem',
+      fetchScheduleLesson: 'scheduleLesson/fetchDetailScheduleLesson',
     }),
   },
 }
