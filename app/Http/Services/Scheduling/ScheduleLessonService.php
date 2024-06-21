@@ -6,7 +6,6 @@ use App\Exceptions\ErrorAPIException;
 use App\Helpers\ApiResponseTrait;
 use App\Http\Repositories\MasterData\SemesterRepository;
 use App\Http\Repositories\Scheduling\ScheduleLessonRepository;
-use Illuminate\Support\Facades\Log;
 
 class ScheduleLessonService
 {
