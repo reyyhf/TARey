@@ -14,6 +14,7 @@ import authentication from "./modules/authentication";
 import curriculum from "./modules/curriculum";
 import scheduleLessonHour from "./modules/schedule-lesson-hour";
 import scheduleLesson from "./modules/schedule-lesson";
+import criteriaConstraint from "./modules/criteria-constraint";
 
 const listModules = {
     authentication,
@@ -29,6 +30,7 @@ const listModules = {
     curriculum,
     scheduleLessonHour,
     scheduleLesson,
+    criteriaConstraint
 };
 
 Vue.use(Vuex);

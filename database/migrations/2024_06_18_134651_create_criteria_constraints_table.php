@@ -14,11 +14,11 @@ return new class extends Migration {
     {
         Schema::create('criteria_constraints', function (Blueprint $table) {
             $table->string('id')->primary()->index();
-            $table->text("constraint");
+            $table->text("constraint")->nullable();
             $table->enum("type", ["hard", "soft"]);
-            $table->char("is_dynamic", 1);
-            $table->integer("max_teaching_hours");
-            $table->integer("max_subject_hours");
+            $table->boolean('is_dynamic')->default(false);
+            $table->integer("max_teaching_hours")->nullable();
+            $table->integer("max_subject_hours")->nullable();
             $table->timestamps();
 
             $table->softDeletes();
