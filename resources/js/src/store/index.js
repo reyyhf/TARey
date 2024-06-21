@@ -31,21 +31,21 @@ import scheduleLesson from "./modules/schedule-lesson";
 import criteriaConstraint from "./modules/criteria-constraint";
 
 const listModules = {
-  authentication,
-  userRoleAccess,
-  lessonCategory,
-  classroom,
-  userStatus,
-  lesson,
-  semester,
-  scheduleDay,
-  user,
-  teacher,
-  curriculum,
-  scheduleLessonHour,
-  scheduleLesson,
-    criteriaConstraint
-  scheduleLessonItem,
+    authentication,
+    userRoleAccess,
+    lessonCategory,
+    classroom,
+    userStatus,
+    lesson,
+    semester,
+    scheduleDay,
+    user,
+    teacher,
+    curriculum,
+    scheduleLessonHour,
+    scheduleLesson,
+    criteriaConstraint,
+    scheduleLessonItem,
 }
 
 Vue.use(Vuex)
