@@ -1,4 +1,5 @@
 import { apiHandler } from '@/plugins/api-handler'
+import { sortNested } from '@/utils/sort-nested'
 
 const scheduleLessonItemApiUrl = 'schedule-lesson-item'
 
@@ -55,12 +56,10 @@ const scheduleLessonItem = {
         apiHandler
           .get(`${scheduleLessonItemApiUrl}`, { params: parameter })
           .then((response) => {
-            response.data.data = response.data.data.sort((a, b) => {
-              return (
-                a.schedule_lesson_hour.order_direction -
-                b.schedule_lesson_hour.order_direction
-              )
-            })
+            response.data.data = sortNested(response.data.data, [
+              '<schedule_lesson_hour.schedule_day.order_direction',
+              '<schedule_lesson_hour.order_direction',
+            ])
             context.commit('setScheduleLessonItems', response.data.data)
             resolve(response)
           })
