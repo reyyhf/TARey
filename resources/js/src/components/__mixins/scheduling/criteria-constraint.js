@@ -24,12 +24,6 @@ const criteriaConstraintMixins = {
                     value: "constraint",
                     sortable: true,
                 },
-                {
-                    text: "Aksi",
-                    value: "actions",
-                    align: "center",
-                    sortable: false,
-                },
             ],
             payload: {
                 constraint: null,
