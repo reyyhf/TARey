@@ -20,4 +20,14 @@ class CriteriaConstraintRepository extends BaseRepository
     {
         return $this->model->orderBy('created_at', 'desc')->get();
     }
+
+    public function findIsDynamicAndMaxTeach()
+    {
+        return $this->model->whereIsDynamic(true)->where('max_teaching_hours', '!=', null)->first();
+    }
+
+    public function findIsDynamicAndMaxSubject()
+    {
+        return $this->model->whereIsDynamic(true)->where('max_subject_hours', '!=', null)->first();
+    }
 }

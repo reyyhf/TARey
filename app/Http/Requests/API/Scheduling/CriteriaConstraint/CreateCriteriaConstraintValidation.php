@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\API\Scheduling\ScheduleLesson;
+namespace App\Http\Requests\API\Scheduling\CriteriaConstraint;
 
 use App\Http\Requests\API\BaseRequest;
 
@@ -11,11 +11,8 @@ class CreateCriteriaConstraintValidation extends BaseRequest
     {
         return
             [
-                "constraint" => 'nullable|string',
-                "type" => 'required|in:hard,soft',
-                "is_dynamic" => 'required|boolean',
-                "max_teaching_hours" => 'nullable|number',
-                "max_subject_hours" => 'nullable|number'
+                "max_teaching_hours" => 'required|integer',
+                "max_subject_hours" => 'required|integer'
             ];
     }
 }

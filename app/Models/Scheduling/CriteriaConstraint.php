@@ -13,6 +13,6 @@ class CriteriaConstraint extends Base
         'type',
         'is_dynamic',
         'max_teaching_hours',
-        'max_subjects_hours'
+        'max_subject_hours'
     ];
 }

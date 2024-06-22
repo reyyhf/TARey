@@ -38,6 +38,17 @@ const criteriaConstraint = {
             });
         },
 
+        storeCriteriaConstraint(context, parameter){
+            return new Promise((resolve, reject) => {
+                apiHandler.post(`${criteriaConstraintApiUrl}/store`, parameter)
+                    .then((response) => {
+                        resolve(response);
+                    }).catch((errors) => {
+                        reject(errors);
+                    })
+            });
+        }
+
     }
 }
 

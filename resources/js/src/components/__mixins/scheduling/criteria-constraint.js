@@ -32,9 +32,9 @@ const criteriaConstraintMixins = {
                 },
             ],
             payload: {
-                type: null,
                 constraint: null,
-                is_dynamic: false,
+                type: null,
+                is_dynamic: null,
                 max_teaching_hours: null,
                 max_subject_hours: null
             },
@@ -43,6 +43,7 @@ const criteriaConstraintMixins = {
     methods: {
         ...mapActions({
             fetchData: "criteriaConstraint/fetchCriteriaConstraint",
+            storeData: "criteriaConstraint/storeCriteriaConstraint"
         })
     }
 

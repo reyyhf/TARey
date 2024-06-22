@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\Scheduling;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\Scheduling\ScheduleLesson\CreateCriteriaConstraintValidation;
+use App\Http\Requests\API\Scheduling\CriteriaConstraint\CreateCriteriaConstraintValidation;
 use App\Http\Services\Scheduling\CriteriaConstraintService;
 
 class CriteriaConstraintController extends Controller
