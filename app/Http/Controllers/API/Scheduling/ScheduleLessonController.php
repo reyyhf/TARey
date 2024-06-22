@@ -9,7 +9,7 @@ use App\Http\Services\Scheduling\ScheduleLessonService;
 
 class ScheduleLessonController extends Controller
 {
-    protected $service;
+    protected ScheduleLessonService $service;
 
     public function __construct(ScheduleLessonService $service)
     {

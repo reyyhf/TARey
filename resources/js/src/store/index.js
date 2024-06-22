@@ -15,22 +15,24 @@ import teacher from './modules/teacher'
 import user from './modules/user'
 import userRoleAccess from './modules/user-role-access'
 import userStatus from './modules/user-status'
+import criteriaConstraint from "./modules/criteria-constraint";
 
 const listModules = {
-  authentication,
-  userRoleAccess,
-  lessonCategory,
-  classroom,
-  userStatus,
-  lesson,
-  semester,
-  scheduleDay,
-  user,
-  teacher,
-  curriculum,
-  scheduleLessonHour,
-  scheduleLesson,
-  scheduleLessonItem,
+    authentication,
+    userRoleAccess,
+    lessonCategory,
+    classroom,
+    userStatus,
+    lesson,
+    semester,
+    scheduleDay,
+    user,
+    teacher,
+    curriculum,
+    scheduleLessonHour,
+    scheduleLesson,
+    criteriaConstraint,
+    scheduleLessonItem,
 }
 
 Vue.use(Vuex)

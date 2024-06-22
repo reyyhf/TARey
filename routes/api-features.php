@@ -6,6 +6,7 @@ use App\Http\Controllers\API\MasterData\Lesson\LessonCategoryController;
 use App\Http\Controllers\API\MasterData\Lesson\LessonController;
 use App\Http\Controllers\API\MasterData\Schedule\ScheduleDayController;
 use App\Http\Controllers\API\MasterData\Schedule\ScheduleLessonHourController;
+use App\Http\Controllers\API\Scheduling\CriteriaConstraintController;
 use App\Http\Controllers\API\Scheduling\ScheduleLessonController;
 use App\Http\Controllers\API\MasterData\SemesterController;
 use App\Http\Controllers\API\MasterData\User\RoleController;
@@ -136,4 +137,13 @@ Route::prefix('schedule-lesson-item')->name('schedule-lesson.')->group(function 
     Route::get('/{id}', [ScheduleLessonItemController::class, 'show'])->name('show');
     Route::put('/update/{id}', [ScheduleLessonItemController::class, 'update'])->name('update');
     Route::delete('/destroy/{id}', [ScheduleLessonItemController::class, 'destroy'])->name('destroy');
+});
+
+// Criteria Constraint
+Route::prefix('criteria-constraint')->name('criteria-constraint.')->group(function () {
+    Route::get('/', [CriteriaConstraintController::class, 'index'])->name('index');
+    Route::post('/store', [CriteriaConstraintController::class, 'store'])->name('store');
+    // Route::get('/{id}', [CriteriaConstraintController::class, 'show'])->name('show');
+    // Route::put('/update/{id}', [CriteriaConstraintController::class, 'update'])->name('update');
+    // Route::delete('/destroy/{id}', [CriteriaConstraintController::class, 'destroy'])->name('destroy');
 });

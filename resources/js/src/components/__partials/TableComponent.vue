@@ -24,6 +24,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isSearchHidden: {
+            type: Boolean,
+            default : false
+    }
   },
   computed: {
     hideFooterAction() {
@@ -54,7 +58,7 @@ export default {
             dense
             v-model="search"
             label="Cari Data"
-            class="mx-4 pt-4"
+            class="mx-4 pt-4" :class="{ 'd-none': isSearchHidden }"
           ></v-text-field>
         </v-col>
 
