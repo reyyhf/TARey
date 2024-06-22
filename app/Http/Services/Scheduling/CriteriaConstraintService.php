@@ -36,7 +36,12 @@ class CriteriaConstraintService
                 ' jam mengajar perhari dalam satu mata pelajaran di kelas yang sama. Jam maksimal mata pelajaran berurutan adalah ' . $inputData['max_subject_hours'] . ' jam perhari';
             $criteriaConstraint = $this->repository->store($inputData);
         } else {
-            return $this->resultResponse('error', 'Data Sudah Ada!, Edit data untuk mengubah!', 500);
+            $id = $dynamicMaxTeach->id;
+            $inputData['type'] = 'hard';
+            $inputData['is_dynamic'] = true;
+            $inputData['constraint'] = 'Guru tidak boleh mengajar melebihi dari maksimal ' . $inputData['max_teaching_hours'] .
+                ' jam mengajar perhari dalam satu mata pelajaran di kelas yang sama. Jam maksimal mata pelajaran berurutan adalah ' . $inputData['max_subject_hours'] . ' jam perhari';
+            $criteriaConstraint = $this->repository->update($id, $inputData);
         }
 
         return $this->resultResponse('success', 'Data berhasil ditambahnkan', 200, $criteriaConstraint);
