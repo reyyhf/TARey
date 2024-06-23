@@ -1,0 +1,22 @@
+{
+  "id": "1fb09fc0-59c7-4933-807c-1ccb3bc74644",
+  "lesson_id": "e396eded-f658-49ef-ad50-ac1bc1c12e70",
+  "teacher_id": "5253bd2f-e5df-44f7-a8cf-974a4ae069cb",
+  "schedule_lesson_id": "e16ca269-6aef-4d8d-9ecb-4b1edc0598a9",
+  "schedule_lesson_hour_id": "68d19de4-29e6-4580-a79b-c79ae26070a4",
+  "deleted_at": null,
+  "created_at": "2024-06-22T21:54:52.000000Z",
+  "updated_at": "2024-06-22T21:54:52.000000Z",
+  "schedule_lesson_hour": {
+    "id": "68d19de4-29e6-4580-a79b-c79ae26070a4",
+    "schedule_day_id": "7c84d17e-7eb4-4ed4-8ef2-727e64196326",
+    "started_at": 1,
+    "ended_at": 2,
+    "started_duration": "06:40",
+    "ended_duration": "07:40",
+    "order_direction": 1,
+    "is_break_hour": false,
+    "created_at": "2024-06-22T10:42:26.000000Z",
+    "updated_at": "2024-06-22T10:42:26.000000Z"
+  }
+}
