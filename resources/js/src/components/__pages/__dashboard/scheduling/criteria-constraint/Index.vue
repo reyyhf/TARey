@@ -29,5 +29,7 @@ export default {
                 </form-component>
             </template>
         </update-or-create-component>
+
+        <alert-component ref="alert"></alert-component>
     </div>
 </template>
