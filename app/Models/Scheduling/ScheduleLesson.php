@@ -28,4 +28,9 @@ class ScheduleLesson extends Base
    {
       return $this->belongsTo(Classroom::class, 'classroom_id');
    }
+
+   public function scheduleLessonItems()
+   {
+      return $this->hasMany(ScheduleLessonItem::class, 'schedule_lesson_id', 'id');
+   }
 }

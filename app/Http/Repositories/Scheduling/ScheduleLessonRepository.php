@@ -17,11 +17,11 @@ class ScheduleLessonRepository extends BaseRepository
 
   public function index()
   {
-    return $this->model->with(['semester', 'classroom'])->orderBy('created_at', 'desc')->get();
+    return $this->model->with(['semester', 'classroom', 'scheduleLessonItems.scheduleLessonHour', 'scheduleLessonItems.lesson', 'scheduleLessonItems.teacher', 'scheduleLessonItems.scheduleLessonHour.scheduleDay'])->orderBy('created_at', 'desc')->get();
   }
 
   public function findScheduleLesson($id)
   {
-    return $this->model->with(['semester', 'classroom'])->where('id', $id)->first();
+    return $this->model->with(['semester', 'classroom', 'scheduleLessonItems.scheduleLessonHour', 'scheduleLessonItems.lesson', 'scheduleLessonItems.teacher', 'scheduleLessonItems.scheduleLessonHour.scheduleDay'])->where('id', $id)->first();
   }
 }
