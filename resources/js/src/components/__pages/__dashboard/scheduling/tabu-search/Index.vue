@@ -1,12 +1,14 @@
 <script>
 import { mapActions } from 'vuex'
+import { dragscroll } from 'vue-dragscroll'
 
 export default {
   data() {
     return {
       scheduleDays: [],
       tabuSearchResult: null,
-      maxHours: 10,
+      isLoading: false,
+      lesson: null,
     }
   },
   methods: {
@@ -16,34 +18,71 @@ export default {
       fetchTabuSearch: 'tabuSearch/fetchTabuSearch',
     }),
     handleTabuSearch() {
-      this.fetchTabuSearch().then((result) => {
-        this.tabuSearchResult = result.data.data
-      })
+      this.isLoading = true
+      this.fetchTabuSearch()
+        .then((result) => {
+          this?.$refs?.alert?.show(
+            result?.data?.meta?.status,
+            result?.data?.meta?.message
+          )
+          this.tabuSearchResult = result.data.data
+        })
+        .catch((err) => {
+          this?.$refs?.alert?.show(
+            result?.data?.meta?.status,
+            result?.data?.meta?.message
+          )
+          console.log(err)
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
     },
+    showLessonDetail(lesson) {},
   },
-  created() {
-    this.fetchDays().then((result) => {
-      this.scheduleDays = result.data.data
-    })
+  computed: {
+    maxHours: function () {},
+  },
+  mounted() {
+    this.fetchDays()
+      .then((result) => {
+        this.scheduleDays = result.data.data
+      })
+      .catch((err) => {
+        this?.$refs?.alert?.show(
+          result?.data?.meta?.status,
+          result?.data?.meta?.message
+        )
+        console.log(err)
+      })
+  },
+  directives: {
+    dragscroll,
   },
 }
 </script>
 
 <template>
   <main class="schedule">
-    <card-component title="Jadwal Mata Pelajaran" icon="calendar-clock-outline">
+    <card-component
+      title="Tabu Search"
+      icon="calendar-clock-outline"
+      :withLoading="isLoading"
+    >
       <div class="actions">
-        <v-btn color="primary" @click="handleTabuSearch">Proses</v-btn>
+        <v-btn color="primary" @click="handleTabuSearch" :disabled="isLoading">
+          Proses
+        </v-btn>
         <v-btn color="success" v-if="tabuSearchResult">Simpan</v-btn>
       </div>
-      <div class="table-schedule">
+      <div class="table-schedule" v-dragscroll>
         <table v-if="scheduleDays.length && tabuSearchResult">
           <thead>
             <tr>
               <th rowspan="3">Kelas</th>
             </tr>
             <tr>
-              <th v-for="day in scheduleDays" :colspan="maxHours">
+              <th v-for="day in scheduleDays" :colspan="day.total_hours">
                 {{ day.name }}
               </th>
             </tr>
@@ -52,7 +91,7 @@ export default {
                 <th
                   colspan="1"
                   class="text-center border"
-                  v-for="i in maxHours"
+                  v-for="i in day.total_hours"
                 >
                   {{ i }}
                 </th>
@@ -72,7 +111,11 @@ export default {
                     lesson?.score ? 'constraint-error' : ''
                   }`"
                 >
-                  <div v-if="lesson" class="lesson">
+                  <div
+                    v-if="lesson"
+                    class="lesson"
+                    @click="showLessonDetail(lesson)"
+                  >
                     <span> {{ lesson.lesson.acronym }}</span>
                     <span> {{ lesson.teacher.name }}</span>
                   </div>
@@ -81,8 +124,15 @@ export default {
             </tr>
           </tbody>
         </table>
+        <div v-else class="text-center">
+          Mulai proses untuk menampilkan data
+        </div>
       </div>
     </card-component>
+
+    <v-dialog v-model="lesson" width="500"> aa </v-dialog>
+
+    <alert-component ref="alert"></alert-component>
   </main>
 </template>
 
@@ -91,8 +141,12 @@ export default {
   overflow-x: auto;
   padding-bottom: 16px;
 }
+.table-schedule * {
+  user-select: none;
+}
 table {
   overflow-x: hidden;
+  border-radius: 16px;
 }
 td {
   min-width: 160px;
@@ -100,10 +154,14 @@ td {
 table,
 th,
 td {
-  border: 1px solid;
+  border: 1px solid rgba(0, 0, 0, 0.3);
   border-spacing: 0;
   border-collapse: collapse;
-  padding: 16px;
+  text-align: center;
+}
+
+table {
+  border-radius: 16px;
 }
 
 .table-schedule::-webkit-scrollbar {
@@ -117,14 +175,14 @@ td {
 
 /* Handle */
 .table-schedule::-webkit-scrollbar-thumb {
-  background: #555;
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 16px;
   cursor: pointer;
 }
 
 /* Handle on hover */
 .table-schedule::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: rgba(0, 0, 0, 0.3);
 }
 .actions {
   display: flex;
@@ -132,10 +190,21 @@ td {
   gap: 16px;
   margin-bottom: 16px;
 }
+td:not(.lesson),
+th {
+  padding: 16px;
+}
+tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
 .lesson {
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
 }
 .constraint-error {
   background-color: #f34545;
