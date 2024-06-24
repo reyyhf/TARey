@@ -26,16 +26,16 @@ class TabuSearchService
 
   public function search($inputData)
   {
-    $maxIteration = isset($inputData['max_iteration']) ?  $inputData['max_iteration'] : 100;
-    $tabuSize = isset($inputData['tabu_size']) ? $inputData['tabu_size'] : 10;
+    $maxIteration = isset($inputData['max_iteration']) ?  intval($inputData['max_iteration']) : 100;
+    $tabuSize = isset($inputData['tabu_size']) ? intval($inputData['tabu_size']) : 10;
 
     $scheduleDays = ScheduleDay::orderBy('order_direction', 'asc')->get()->toArray();
     $scheduleClassrooms = $this->initSolutions($scheduleDays);
-    $newScheduleClassrooms = $this->generateNewSolution($scheduleClassrooms);
-    test($this->evaluateSchedules($newScheduleClassrooms));
+    $scheduleClassrooms = $this->evaluateSchedules($scheduleClassrooms);
 
+    $result = $this->tabuSearch($scheduleClassrooms, $tabuSize, $maxIteration);
 
-    return $this->resultResponse('success', 'Data Berhasil Ditampilkan', 200, $newScheduleClassrooms);
+    return $this->resultResponse('success', 'Data berhasil ditampilkan', 200, $result);
   }
 
   public function initSolutions($scheduleDays)
@@ -111,13 +111,13 @@ class TabuSearchService
     $maxSubjectHours = $constraint->max_subject_hours;
 
     // Check constraint
-    foreach ($scheduleClassrooms as &$scheduleClassroom) {
-      foreach ($scheduleClassroom['schedules'] as &$day) {
-        foreach ($day['lessons'] as $index => &$lesson) {
+    foreach ($scheduleClassrooms as $scheduleClassroom) {
+      foreach ($scheduleClassroom['schedules'] as $day) {
+        foreach ($day['lessons'] as $index => $lesson) {
           if (!$lesson) continue;
 
-          $conflict = $this->checkTeacherConflictById($scheduleClassrooms, $lesson['teacher']['id']);
-          if ($conflict['conflict']) {
+          $conflict = $this->checkTeacherHourConflict($scheduleClassrooms, $lesson['teacher']['id'], $index);
+          if ($conflict) {
             if (isset($lesson['score'])) {
               $lesson['score'] += 20;
             } else {
@@ -133,40 +133,76 @@ class TabuSearchService
     return $scheduleClassrooms;
   }
 
-  function checkTeacherConflictById($scheduleClassrooms, $teacherId)
+  function checkTeacherHourConflict($scheduleClassrooms, $teacherId, $hour)
   {
-    $teacherSchedules = [];
+    $count = 0;
+    foreach ($scheduleClassrooms as $scheduleClassroom) {
+      foreach ($scheduleClassroom['schedules'] as $day) {
+        foreach ($day['lessons'] as $index => $lesson) {
+          if ($lesson && $index == $hour && $lesson['teacher_id'] == $teacherId) {
+            $count += 1;
+          }
+        }
+      }
+    }
+    return $count > 1;
+  }
 
+
+  public function sumTotalScore($scheduleClassrooms)
+  {
+    $totalScore = 0;
     foreach ($scheduleClassrooms as $scheduleClassroom) {
       foreach ($scheduleClassroom['schedules'] as $day) {
         foreach ($day['lessons'] as $lesson) {
-          if ($lesson && $lesson['teacher_id'] === $teacherId) {
-            $dayName = $day['name'];
-            $hourIndex = array_search($lesson, $day['lessons']);
-
-            if (!isset($teacherSchedules[$dayName])) {
-              $teacherSchedules[$dayName] = [];
-            }
-
-            if (in_array($hourIndex, $teacherSchedules[$dayName])) {
-              return [
-                'conflict' => true,
-                'teacher_id' => $teacherId,
-                'day' => $dayName,
-                'hour' => $hourIndex
-              ];
-            }
-
-            $teacherSchedules[$dayName][] = $hourIndex;
+          if ($lesson) {
+            $totalScore += $lesson['score'];
           }
         }
       }
     }
 
-    return ['conflict' => false];
+    return $totalScore;
   }
 
-  function deepClone($array)
+  private function tabuSearch($initSchedule, $tabuSize, $maxIteration)
+  {
+    $currentSolution = $this->deepClone($initSchedule);
+    $bestSolution = $this->deepClone($initSchedule);
+    $bestScore = $this->sumTotalScore($bestSolution);
+    $tabuList = [];
+
+    for ($iteration = 0; $iteration < $maxIteration; $iteration++) {
+      $newSolution = $this->generateNewSolution($currentSolution);
+
+      $newEvaluateSchedule = $this->evaluateSchedules($newSolution);
+
+
+      $newScore = $this->sumTotalScore($newEvaluateSchedule);
+      if ($newScore < $bestScore) {
+        $bestSolution = $this->deepClone($newSolution);
+        $bestScore = $newScore;
+      }
+
+      if (!in_array($newSolution, $tabuList)) {
+        $tabuList[] = $this->deepClone($newSolution);
+
+        if (count($tabuList) > $tabuSize) {
+          array_shift($tabuList);
+        }
+
+        $currentSolution = $this->deepClone($newSolution);
+      }
+    }
+
+    return [
+      'bestSolution' => $bestSolution,
+      'bestScore' => $bestScore,
+    ];
+  }
+
+
+  public function deepClone($array)
   {
     return unserialize(serialize($array));
   }
