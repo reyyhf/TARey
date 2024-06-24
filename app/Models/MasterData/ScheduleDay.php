@@ -25,6 +25,11 @@ class ScheduleDay extends Base
         return $this->belongsTo(Semester::class);
     }
 
+    public function scheduleLessonHours()
+    {
+        return $this->hasMany(ScheduleLessonHour::class);
+    }
+
     public function getSemesterDataAttribute()
     {
         $startedYear = optional($this->semester)->started_year;
