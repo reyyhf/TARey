@@ -5,7 +5,7 @@ export default {
   data() {
     return {
       scheduleDays: [],
-      scheduleClassrooms: [],
+      tabuSearchResult: null,
       maxHours: 10,
     }
   },
@@ -15,13 +15,15 @@ export default {
       fetchScheduleLessons: 'scheduleLesson/fetchScheduleLessons',
       fetchTabuSearch: 'tabuSearch/fetchTabuSearch',
     }),
+    handleTabuSearch() {
+      this.fetchTabuSearch().then((result) => {
+        this.tabuSearchResult = result.data.data
+      })
+    },
   },
   created() {
     this.fetchDays().then((result) => {
       this.scheduleDays = result.data.data
-    })
-    this.fetchTabuSearch().then((result) => {
-      console.log(result.data.data)
     })
   },
 }
@@ -31,11 +33,11 @@ export default {
   <main class="schedule">
     <card-component title="Jadwal Mata Pelajaran" icon="calendar-clock-outline">
       <div class="actions">
-        <v-btn color="primary">Proses</v-btn>
-        <v-btn color="success">Simpan</v-btn>
+        <v-btn color="primary" @click="handleTabuSearch">Proses</v-btn>
+        <v-btn color="success" v-if="tabuSearchResult">Simpan</v-btn>
       </div>
       <div class="table-schedule">
-        <table v-if="scheduleDays.length">
+        <table v-if="scheduleDays.length && tabuSearchResult">
           <thead>
             <tr>
               <th rowspan="3">Kelas</th>
@@ -58,35 +60,21 @@ export default {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="lesson in scheduleLessons">
+            <tr v-for="result in tabuSearchResult.result">
               <td>
-                {{ lesson.classroom.name }}
+                {{ result.classroom.name }}
               </td>
-              <template v-for="day in scheduleDays">
+              <template v-for="day in result.schedules">
                 <td
                   colspan="1"
-                  class="text-center border"
-                  v-for="i in maxHours"
+                  v-for="lesson in day.lessons"
+                  :class="`text-center border ${
+                    lesson?.score ? 'constraint-error' : ''
+                  }`"
                 >
-                  <div>
-                    <span>
-                      {{
-                        lesson.schedule_lesson_items.find(
-                          (item) =>
-                            item.schedule_lesson_hour.started_at === i &&
-                            item.schedule_lesson_hour.schedule_day_id === day.id
-                        )?.lesson?.name
-                      }}
-                    </span>
-                    <span>
-                      {{
-                        lesson.schedule_lesson_items.find(
-                          (item) =>
-                            item.schedule_lesson_hour.started_at === i &&
-                            item.schedule_lesson_hour.schedule_day_id === day.id
-                        )?.teacher?.nuptk
-                      }}
-                    </span>
+                  <div v-if="lesson" class="lesson">
+                    <span> {{ lesson.lesson.acronym }}</span>
+                    <span> {{ lesson.teacher.name }}</span>
                   </div>
                 </td>
               </template>
@@ -143,5 +131,14 @@ td {
   justify-content: end;
   gap: 16px;
   margin-bottom: 16px;
+}
+.lesson {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.constraint-error {
+  background-color: #f34545;
+  color: white;
 }
 </style>

@@ -10,6 +10,7 @@ use App\Models\MasterData\ScheduleDay;
 use App\Models\Scheduling\CriteriaConstraint;
 use App\Models\Scheduling\ScheduleLesson;
 use App\Models\Scheduling\ScheduleLessonItem;
+use Illuminate\Support\Facades\Log;
 
 class TabuSearchService
 {
@@ -81,9 +82,10 @@ class TabuSearchService
     foreach ($scheduleClassrooms as &$scheduleClassroom) {
       $scheduleLessonItems = [];
 
-      foreach ($scheduleClassroom['schedules'] as $day) {
-        foreach ($day['lessons'] as $lesson) {
+      foreach ($scheduleClassroom['schedules'] as &$day) {
+        foreach ($day['lessons'] as &$lesson) {
           if ($lesson) {
+            $lesson['score'] = 0;
             $scheduleLessonItems[] = $lesson;
           }
         }
@@ -196,8 +198,8 @@ class TabuSearchService
     }
 
     return [
-      'bestSolution' => $bestSolution,
-      'bestScore' => $bestScore,
+      'result' => $bestSolution,
+      'score' => $bestScore,
     ];
   }
 
