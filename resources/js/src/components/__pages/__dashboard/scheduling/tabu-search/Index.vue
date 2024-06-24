@@ -69,12 +69,18 @@ export default {
       icon="calendar-clock-outline"
       :withLoading="isLoading"
     >
-      <div class="actions">
-        <v-btn color="primary" @click="handleTabuSearch" :disabled="isLoading">
-          Proses
-        </v-btn>
-        <v-btn color="success" v-if="tabuSearchResult">Simpan</v-btn>
-      </div>
+      <template v-slot:action>
+        <div class="actions">
+          <v-btn
+            color="primary"
+            @click="handleTabuSearch"
+            :disabled="isLoading"
+          >
+            Proses
+          </v-btn>
+          <v-btn color="success" v-if="tabuSearchResult">Simpan</v-btn>
+        </div>
+      </template>
       <div class="table-schedule" v-dragscroll>
         <table v-if="scheduleDays.length && tabuSearchResult">
           <thead>
@@ -188,7 +194,7 @@ table {
   display: flex;
   justify-content: end;
   gap: 16px;
-  margin-bottom: 16px;
+  align-items: center;
 }
 td:not(.lesson),
 th {
