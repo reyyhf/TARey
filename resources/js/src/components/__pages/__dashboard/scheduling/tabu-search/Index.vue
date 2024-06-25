@@ -8,7 +8,7 @@ export default {
       scheduleDays: [],
       tabuSearchResult: null,
       isLoading: false,
-      lesson: null,
+      selectedLesson: null,
     }
   },
   methods: {
@@ -38,7 +38,6 @@ export default {
           this.isLoading = false
         })
     },
-    showLessonDetail(lesson) {},
   },
   computed: {
     maxHours: function () {},
@@ -111,20 +110,75 @@ export default {
               </td>
               <template v-for="day in result.schedules">
                 <td
+                  v-ripple
                   colspan="1"
                   v-for="lesson in day.lessons"
                   :class="`text-center border ${
                     lesson?.score ? 'constraint-error' : ''
                   }`"
                 >
-                  <div
-                    v-if="lesson"
-                    class="lesson"
-                    @click="showLessonDetail(lesson)"
+                  <v-dialog
+                    :value="selectedLesson === lesson && lesson !== null"
+                    width="500"
+                    v-if="lesson !== null"
                   >
-                    <span> {{ lesson.lesson.acronym }}</span>
-                    <span> {{ lesson.teacher.name }}</span>
-                  </div>
+                    <template v-slot:activator="{ on, attrs }">
+                      <div
+                        v-if="lesson"
+                        class="lesson"
+                        @click="selectedLesson = lesson"
+                        v-on="on"
+                        v-bind="attrs"
+                      >
+                        <span class="font-weight-bold">
+                          {{ lesson.lesson.acronym }}</span
+                        >
+                        <span> {{ lesson.teacher.name }}</span>
+                      </div>
+                    </template>
+
+                    <v-card>
+                      <v-card-title class="font-weight-bold">
+                        Detail
+                      </v-card-title>
+                      <v-card-text>
+                        <input-component
+                          v-model="lesson.lesson.name"
+                          icon="account"
+                          type="text"
+                          label="Mata Pelajaran"
+                          readonly
+                        />
+                        <input-component
+                          v-model="lesson.teacher.name"
+                          icon="account"
+                          type="text"
+                          label="Nama Pengajar"
+                          readonly
+                        />
+                        <input-component
+                          v-model="lesson.teacher.nuptk"
+                          icon="account"
+                          type="text"
+                          label="NUPTK"
+                          readonly
+                        />
+                      </v-card-text>
+
+                      <v-divider></v-divider>
+
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="primary"
+                          text
+                          @click="selectedLesson = null"
+                        >
+                          Close
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </td>
               </template>
             </tr>
@@ -135,8 +189,6 @@ export default {
         </div>
       </div>
     </card-component>
-
-    <v-dialog v-model="lesson" width="500"> aa </v-dialog>
 
     <alert-component ref="alert"></alert-component>
   </main>
