@@ -11,47 +11,47 @@ class ClassroomSeeder extends Seeder
     {
         $classrooms = [
             [
-                'name' => 'X MIPA 1',
+                'name' => 'X IPA 1',
                 'majority' => 'IPA',
                 'quota' => 35,
             ],
             [
-                'name' => 'X MIPA 2',
+                'name' => 'X IPA 2',
                 'majority' => 'IPA',
                 'quota' => 35,
             ],
             [
-                'name' => 'X MIPA 3',
+                'name' => 'X IPA 3',
                 'majority' => 'IPA',
                 'quota' => 35,
             ],
             [
-                'name' => 'XI MIPA 1',
+                'name' => 'XI IPA 1',
                 'majority' => 'IPA',
                 'quota' => 35,
             ],
             [
-                'name' => 'XI MIPA 2',
+                'name' => 'XI IPA 2',
                 'majority' => 'IPA',
                 'quota' => 35,
             ],
             [
-                'name' => 'XI MIPA 3',
+                'name' => 'XI IPA 3',
                 'majority' => 'IPA',
                 'quota' => 35,
             ],
             [
-                'name' => 'XII MIPA 1',
+                'name' => 'XII IPA 1',
                 'majority' => 'IPA',
                 'quota' => 35,
             ],
             [
-                'name' => 'XII MIPA 2',
+                'name' => 'XII IPA 2',
                 'majority' => 'IPA',
                 'quota' => 35,
             ],
             [
-                'name' => 'XII MIPA 3',
+                'name' => 'XII IPA 3',
                 'majority' => 'IPA',
                 'quota' => 35,
             ],
@@ -104,7 +104,7 @@ class ClassroomSeeder extends Seeder
 
         foreach ($classrooms as $classroom) {
             $label = explode(' ', $classroom['name']);
-            $classroom['label'] = $label[0].' '.$label[1];
+            $classroom['label'] = $label[0] . ' ' . $label[1];
 
             Classroom::updateOrCreate([
                 'name' => $classroom['name'],

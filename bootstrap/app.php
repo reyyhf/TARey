@@ -52,4 +52,11 @@ $app->singleton(
 |
 */
 
+
+
 return $app;
+
+function test($data)
+{
+    dd(json_encode($data, JSON_PRETTY_PRINT));
+}

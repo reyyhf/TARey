@@ -14,8 +14,8 @@ class CreateTabuSearchValidation extends BaseRequest
   public function rules()
   {
     return [
-      'tabu_size' => 'required|numeric|min:1',
-      'max_iteration' => 'required|numeric|min:1',
+      'tabu_size' => 'numeric|min:1',
+      'max_iteration' => 'numeric|min:1',
     ];
   }
 }

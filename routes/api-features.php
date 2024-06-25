@@ -13,6 +13,7 @@ use App\Http\Controllers\API\MasterData\User\RoleController;
 use App\Http\Controllers\API\MasterData\User\UserController;
 use App\Http\Controllers\API\MasterData\User\UserStatusController;
 use App\Http\Controllers\API\Scheduling\ScheduleLessonItemController;
+use App\Http\Controllers\API\Scheduling\TabuSearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -146,4 +147,8 @@ Route::prefix('criteria-constraint')->name('criteria-constraint.')->group(functi
     // Route::get('/{id}', [CriteriaConstraintController::class, 'show'])->name('show');
     // Route::put('/update/{id}', [CriteriaConstraintController::class, 'update'])->name('update');
     // Route::delete('/destroy/{id}', [CriteriaConstraintController::class, 'destroy'])->name('destroy');
+});
+
+Route::prefix('tabu-search')->name('tabu-search')->group(function () {
+    Route::get('/', [TabuSearchController::class, 'search'])->name('tabu-search');
 });
