@@ -194,6 +194,16 @@ export default {
                           label="Nama Pengajar"
                           readonly
                         />
+                        <v-alert
+                          border="top"
+                          color="red"
+                          dark
+                          v-if="lesson.errors?.length"
+                        >
+                          <ul>
+                            <li v-for="error in lesson.errors">{{ error }}</li>
+                          </ul>
+                        </v-alert>
                       </v-card-text>
 
                       <v-divider></v-divider>
