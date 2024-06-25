@@ -17,6 +17,7 @@ import userRoleAccess from './modules/user-role-access'
 import userStatus from './modules/user-status'
 import criteriaConstraint from './modules/criteria-constraint'
 import tabuSearch from './modules/tabu-search'
+import scheduleReport from './modules/schedule-report'
 
 const listModules = {
   authentication,
@@ -35,6 +36,7 @@ const listModules = {
   criteriaConstraint,
   scheduleLessonItem,
   tabuSearch,
+  scheduleReport,
 }
 
 Vue.use(Vuex)

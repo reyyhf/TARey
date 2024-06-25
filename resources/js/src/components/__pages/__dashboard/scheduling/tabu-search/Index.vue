@@ -3,12 +3,18 @@ import { mapActions } from 'vuex'
 import { dragscroll } from 'vue-dragscroll'
 
 export default {
+  mixins: [],
   data() {
     return {
       scheduleDays: [],
       tabuSearchResult: null,
       isLoading: false,
       selectedLesson: null,
+      showModal: false,
+      payload: {
+        data: null,
+        title: 'Report TS',
+      },
     }
   },
   methods: {
@@ -16,6 +22,7 @@ export default {
       fetchDays: 'scheduleDay/fetchScheduleDay',
       fetchScheduleLessons: 'scheduleLesson/fetchScheduleLessons',
       fetchTabuSearch: 'tabuSearch/fetchTabuSearch',
+      storeScheduleReport: 'scheduleReport/storeScheduleReport',
     }),
     handleTabuSearch() {
       this.isLoading = true
@@ -26,21 +33,40 @@ export default {
             result?.data?.meta?.message
           )
           this.tabuSearchResult = result.data.data
+          this.payload.data = result.data.data
         })
         .catch((err) => {
-          this?.$refs?.alert?.show(
-            result?.data?.meta?.status,
-            result?.data?.meta?.message
-          )
+          this?.$refs?.alert?.show('error', err?.message)
           console.log(err)
         })
         .finally(() => {
           this.isLoading = false
         })
     },
-  },
-  computed: {
-    maxHours: function () {},
+    closeModal() {
+      this.showModal = false
+    },
+    submit() {
+      this.isLoading = true
+      this.storeScheduleReport({
+        title: this.payload.title,
+        data: JSON.stringify(this.payload.data),
+      })
+        .then((result) => {
+          this.$router.push({ name: 'schedule-report' })
+          this?.$refs?.alert?.show(
+            result?.data?.meta?.status,
+            result?.data?.meta?.message
+          )
+        })
+        .catch((err) => {
+          this?.$refs?.alert?.show('error', err?.message)
+          console.log(err)
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
+    },
   },
   mounted() {
     this.fetchDays()
@@ -77,7 +103,12 @@ export default {
           >
             Proses
           </v-btn>
-          <v-btn color="success" v-if="tabuSearchResult">Simpan</v-btn>
+          <v-btn
+            color="success"
+            v-if="tabuSearchResult"
+            @click="showModal = true"
+            >Simpan</v-btn
+          >
         </div>
       </template>
       <div class="table-schedule" v-dragscroll>
@@ -143,24 +174,24 @@ export default {
                       </v-card-title>
                       <v-card-text>
                         <input-component
-                          v-model="lesson.lesson.name"
+                          :value="lesson.lesson.name"
                           icon="account"
                           type="text"
                           label="Mata Pelajaran"
                           readonly
                         />
                         <input-component
-                          v-model="lesson.teacher.name"
+                          :value="`${lesson.hour.started_duration}-${lesson.hour.ended_duration}`"
                           icon="account"
                           type="text"
-                          label="Nama Pengajar"
+                          :label="`Jam Ke-${lesson.hour.started_at}`"
                           readonly
                         />
                         <input-component
-                          v-model="lesson.teacher.nuptk"
+                          :value="`${lesson.teacher.name} (${lesson.teacher.nuptk})`"
                           icon="account"
                           type="text"
-                          label="NUPTK"
+                          label="Nama Pengajar"
                           readonly
                         />
                       </v-card-text>
@@ -189,6 +220,30 @@ export default {
         </div>
       </div>
     </card-component>
+
+    <update-or-create-component
+      :closeAction="closeModal"
+      :title="`Buat Laporan`"
+      v-model="showModal"
+    >
+      <template v-slot:form>
+        <form-component
+          ref="form"
+          :methodHandler="submit"
+          buttonSubmitText="Simpan"
+        >
+          <input-component
+            icon="progress-clock"
+            v-model="payload.title"
+            type="text"
+            defa
+            label="Judul Laporan"
+            rules="required"
+          >
+          </input-component>
+        </form-component>
+      </template>
+    </update-or-create-component>
 
     <alert-component ref="alert"></alert-component>
   </main>

@@ -13,6 +13,7 @@ use App\Http\Controllers\API\MasterData\User\RoleController;
 use App\Http\Controllers\API\MasterData\User\UserController;
 use App\Http\Controllers\API\MasterData\User\UserStatusController;
 use App\Http\Controllers\API\Scheduling\ScheduleLessonItemController;
+use App\Http\Controllers\API\Scheduling\ScheduleReportController;
 use App\Http\Controllers\API\Scheduling\TabuSearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -151,4 +152,11 @@ Route::prefix('criteria-constraint')->name('criteria-constraint.')->group(functi
 
 Route::prefix('tabu-search')->name('tabu-search')->group(function () {
     Route::get('/', [TabuSearchController::class, 'search'])->name('tabu-search');
+});
+
+Route::prefix('schedule-report')->name('schedule-report.')->group(function () {
+    Route::get('/', [ScheduleReportController::class, 'index'])->name('index');
+    Route::post('/store', [ScheduleReportController::class, 'store'])->name('store');
+    Route::get('/{id}', [ScheduleReportController::class, 'show'])->name('show');
+    Route::delete('/destroy/{id}', [ScheduleReportController::class, 'destroy'])->name('destroy');
 });
