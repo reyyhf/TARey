@@ -7,6 +7,7 @@ use App\Helpers\ApiResponseTrait;
 use App\Http\Repositories\MasterData\SemesterRepository;
 use App\Http\Repositories\Scheduling\ScheduleLessonRepository;
 use App\Models\MasterData\ScheduleDay;
+use App\Models\MasterData\ScheduleLessonHour;
 use App\Models\Scheduling\CriteriaConstraint;
 use App\Models\Scheduling\ScheduleLesson;
 use App\Models\Scheduling\ScheduleLessonItem;
@@ -35,6 +36,7 @@ class TabuSearchService
     $scheduleClassrooms = $this->evaluateSchedules($scheduleClassrooms);
 
     $result = $this->tabuSearch($scheduleClassrooms, $tabuSize, $maxIteration);
+    $result['result'] = $this->fillLessonsWithHour($result['result']);
 
     return $this->resultResponse('success', 'Data berhasil ditampilkan', 200, $result);
   }
@@ -203,6 +205,21 @@ class TabuSearchService
     ];
   }
 
+
+  public function fillLessonsWithHour($scheduleClassrooms)
+  {
+    foreach ($scheduleClassrooms as &$scheduleClassroom) {
+      foreach ($scheduleClassroom['schedules'] as &$day) {
+        foreach ($day['lessons'] as $index => &$lesson) {
+          if ($lesson) {
+            $lesson['hour'] = ScheduleLessonHour::where('schedule_day_id', $day['id'])->where('started_at', $index + 1)->first();
+          }
+        }
+      }
+    }
+
+    return $scheduleClassrooms;
+  }
 
   public function deepClone($array)
   {

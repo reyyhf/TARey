@@ -1,30 +1,46 @@
 <script>
-import scheduleLessonItemMixin from '@Components/__mixins/scheduling/schedule-lesson-item'
+import scheduleReportMixin from '@Components/__mixins/reporting/schedule-report'
 
 export default {
-  name: 'ScheduleLessonItemIndex',
-  mixins: [scheduleLessonItemMixin],
+  name: 'ScheduleReportIndex',
+  mixins: [scheduleReportMixin],
 }
 </script>
 
 <template>
-  <main class="schedule-lesson-detail">
+  <div class="schedulue-lesson">
     <card-component
-      :title="`Jadwal Mata Pelajaran ${scheduleLesson?.classroom.name || ''}`"
+      title="Jadwal Mata Pelajaran"
       icon="calendar-clock-outline"
-      :withButtonAction="true"
+      :withButtonAction="false"
       :buttonAction="buttonAction"
     >
       <table-component
         v-on:edit-data="view"
         v-on:destroy-data="showDestroyModal"
         :withLoading="isLoading"
+        :withDetail="true"
         :headerData="headers"
         :result="results"
       >
       </table-component>
-
     </card-component>
+
+    <update-or-create-component
+      :closeAction="closeModal"
+      :title="`${updateOrCreateTitle} Data`"
+      v-model="showModal"
+      :width="width"
+    >
+      <template v-slot:form>
+        <form-component
+          ref="form"
+          :methodHandler="submit"
+          buttonSubmitText="Simpan"
+        >
+        </form-component>
+      </template>
+    </update-or-create-component>
 
     <dialog-component
       v-on:confirm-action="destroy"
@@ -43,5 +59,5 @@ export default {
     </dialog-component>
 
     <alert-component ref="alert"></alert-component>
-  </main>
+  </div>
 </template>
