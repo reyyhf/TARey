@@ -118,7 +118,7 @@ class TabuSearchService
         foreach ($day['lessons'] as $index => $lesson) {
           if (!$lesson) continue;
 
-          $conflict = $this->checkTeacherHourConflict($scheduleClassrooms, $lesson['teacher']['id'], $index);
+          $conflict = $this->checkTeacherHourConflict($scheduleClassrooms, $lesson['teacher']['id'], $index, $day['name']);
           if ($conflict) {
             if (isset($lesson['score'])) {
               $lesson['score'] += 20;
@@ -135,13 +135,13 @@ class TabuSearchService
     return $scheduleClassrooms;
   }
 
-  function checkTeacherHourConflict($scheduleClassrooms, $teacherId, $hour)
+  function checkTeacherHourConflict($scheduleClassrooms, $teacherId, $hour, $dayName)
   {
     $count = 0;
     foreach ($scheduleClassrooms as $scheduleClassroom) {
       foreach ($scheduleClassroom['schedules'] as $day) {
         foreach ($day['lessons'] as $index => $lesson) {
-          if ($lesson && $index == $hour && $lesson['teacher_id'] == $teacherId) {
+          if ($lesson && $index == $hour && $lesson['teacher_id'] == $teacherId && $day['name'] == $dayName) {
             $count += 1;
           }
         }
