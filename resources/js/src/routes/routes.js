@@ -215,9 +215,11 @@ const routes = [
       },
       {
         path: 'laporan-penjadwalan',
-        name: 'scheduling-report',
+        name: 'schedule-report',
         component: () =>
-          import('@Components/__pages/__dashboard/report/scheduling/Index.vue'),
+          import(
+            '@Components/__pages/__dashboard/reporting/schedule-report/Index.vue'
+          ),
         meta: {
           auth: true,
           title: 'Laporan Penjadwalan',
@@ -228,7 +230,7 @@ const routes = [
         name: 'teaching-load',
         component: () =>
           import(
-            '@Components/__pages/__dashboard/report/teaching-load/Index.vue'
+            '@Components/__pages/__dashboard/reporting/teaching-load/Index.vue'
           ),
         meta: {
           auth: true,
