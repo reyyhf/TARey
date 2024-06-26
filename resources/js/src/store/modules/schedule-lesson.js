@@ -50,7 +50,6 @@ const scheduleLesson = {
         apiHandler
           .get(`${scheduleLessonApiUrl}/${parameter.id}`)
           .then((response) => {
-            context.commit('setScheduleLesson', response.data.data)
             resolve(response)
           })
           .catch((errors) => {

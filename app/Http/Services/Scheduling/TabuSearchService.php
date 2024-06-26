@@ -88,6 +88,7 @@ class TabuSearchService
                 foreach ($day['lessons'] as &$lesson) {
                     if ($lesson) {
                         $lesson['score'] = 0;
+                        $lesson['errors'] = [];
                         $scheduleLessonItems[] = $lesson;
                     }
                 }
@@ -128,8 +129,15 @@ class TabuSearchService
                         } else {
                             $lesson['score'] = 20;
                         }
+
+                        if (!isset($lesson['errors'])) {
+                            $lesson['errors'] = ['Terdapat jam yang bentrok'];
+                        } else {
+                            $lesson['errors'] = array_merge($lesson['errors'], ['Terdapat jam yang bentrok']);
+                        }
                     } else {
                         $lesson['score'] = 0;
+                        $lesson['errors'] = [];
                     }
 
                     $violations = $this->checkTeachingHours($scheduleClassrooms, $maxTeachingHours);
@@ -143,23 +151,12 @@ class TabuSearchService
                                     } else {
                                         $lesson['score'] = 20; // or any value you want to penalize
                                     }
-                                }
-                            }
-                        }
-                    }
 
-                    $consecutiveTeachingHours = $this->checkConsecutiveSubjectHours($scheduleClassrooms, $maxSubjectHours);
-                    if (!empty($consecutiveTeachingHours)) {
-                        foreach ($consecutiveTeachingHours as $violation) {
-                            if ($scheduleClassroom['classroom']['id'] == $violation['classroom_id']) {
-                                if ($day['id'] == $violation['schedule_id']) {
-                                    $lesson = &$day['lessons'][$violation['lesson_index']];
-                                    if (isset($lesson['score'])) {
-                                        $lesson['score'] += 20; // or any value you want to penalize
+                                    if (!isset($lesson['errors'])) {
+                                        $lesson['errors'] = ["Jam mengajar melebihi $maxTeachingHours jam"];
                                     } else {
-                                        $lesson['score'] = 20; // or any value you want to penalize
+                                        $lesson['errors'] = array_merge($lesson['errors'], ["Jam mengajar melebihi $maxTeachingHours jam"]);
                                     }
-                                    break 3; // Exit all three loops
                                 }
                             }
                         }
