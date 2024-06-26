@@ -15,14 +15,27 @@ export default {
       // Use html2canvas to capture the table as an image
       html2canvas(table).then((canvas) => {
         const imgData = canvas.toDataURL('image/png')
-        const pdf = new jsPDF('p', 'px', [
-          table.scrollHeight,
+        const pdf = new jsPDF('l', 'pt', [
           table.scrollWidth,
+          table.scrollHeight,
         ])
         const imgProps = pdf.getImageProperties(imgData)
         const pdfWidth = pdf.internal.pageSize.getWidth()
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+
+        const pageHeight = pdf.internal.pageSize.getHeight()
+        let position = 0
+
+        // Add the image to the PDF
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight)
+
+        // If the content height is larger than the page height, add new pages
+        while (pdfHeight + position > pageHeight) {
+          position -= pageHeight
+          pdf.addPage()
+          pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight)
+        }
+
         pdf.save(`${this.data.title}.pdf`)
       })
     },
