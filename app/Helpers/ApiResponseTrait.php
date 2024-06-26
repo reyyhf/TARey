@@ -13,9 +13,7 @@ trait ApiResponseTrait
             ],
         ];
 
-        if ($data) {
-            $response = array_merge($response, ['data' => $data]);
-        }
+        $response = array_merge($response, ['data' => $data]);
 
         return response()->json($response, $code);
     }
