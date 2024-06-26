@@ -1,6 +1,5 @@
 <script>
 import { mapActions } from 'vuex'
-import { dragscroll } from 'vue-dragscroll'
 
 export default {
   mixins: [],
@@ -80,9 +79,6 @@ export default {
         )
         console.log(err)
       })
-  },
-  directives: {
-    dragscroll,
   },
 }
 </script>

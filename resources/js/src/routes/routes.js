@@ -226,6 +226,18 @@ const routes = [
         },
       },
       {
+        path: 'detail-laporan-penjadwalan/:id',
+        name: 'detail-schedule-report',
+        component: () =>
+          import(
+            '@Components/__pages/__dashboard/reporting/schedule-report-detail/Index.vue'
+          ),
+        meta: {
+          auth: true,
+          title: 'Detail Laporan Penjadwalan',
+        },
+      },
+      {
         path: 'laporan-beban-mengajar',
         name: 'teaching-load',
         component: () =>
