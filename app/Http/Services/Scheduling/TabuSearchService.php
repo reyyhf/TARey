@@ -147,6 +147,23 @@ class TabuSearchService
                             }
                         }
                     }
+
+                    $consecutiveTeachingHours = $this->checkConsecutiveSubjectHours($scheduleClassrooms, $maxSubjectHours);
+                    if (!empty($consecutiveTeachingHours)) {
+                        foreach ($consecutiveTeachingHours as $violation) {
+                            if ($scheduleClassroom['classroom']['id'] == $violation['classroom_id']) {
+                                if ($day['id'] == $violation['schedule_id']) {
+                                    $lesson = &$day['lessons'][$violation['lesson_index']];
+                                    if (isset($lesson['score'])) {
+                                        $lesson['score'] += 20; // or any value you want to penalize
+                                    } else {
+                                        $lesson['score'] = 20; // or any value you want to penalize
+                                    }
+                                    break 3; // Exit all three loops
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -208,6 +225,47 @@ class TabuSearchService
 
         return $violations;
     }
+
+    public function checkConsecutiveSubjectHours($scheduleClassrooms, $maxConsecutiveHours)
+    {
+        $violations = [];
+
+        foreach ($scheduleClassrooms as $classroom) {
+            foreach ($classroom['schedules'] as $schedule) {
+                $dailyLessons = [];
+
+                foreach ($schedule['lessons'] as $index => $lesson) {
+                    if ($lesson !== null) {
+                        $subjectId = $lesson['lesson']['id'];
+
+                        if (!isset($dailyLessons[$subjectId])) {
+                            $dailyLessons[$subjectId] = 0;
+                        }
+
+                        $dailyLessons[$subjectId]++;
+
+                        // Check if the subject exceeds maxConsecutiveHours
+                        if ($dailyLessons[$subjectId] > $maxConsecutiveHours) {
+                            $violations[] = [
+                                'classroom_id' => $classroom['classroom']['id'],
+                                'schedule_id' => $schedule['id'],
+                                'lesson_index' => $index,
+                                'subject_id' => $subjectId,
+                                'hours' => $dailyLessons[$subjectId],
+                                'max_hours' => $maxConsecutiveHours
+                            ];
+                        }
+                    } else {
+                        // Reset the counter if there is a break in the sequence
+                        $dailyLessons = [];
+                    }
+                }
+            }
+        }
+
+        return $violations;
+    }
+
     public function sumTotalScore($scheduleClassrooms)
     {
         $totalScore = 0;
