@@ -161,6 +161,8 @@ class TabuSearchService
                             }
                         }
                     }
+
+                    $this->checkConsecutiveSubjectHours($scheduleClassrooms, $maxSubjectHours);
                 }
             }
         }
@@ -223,15 +225,13 @@ class TabuSearchService
         return $violations;
     }
 
-    public function checkConsecutiveSubjectHours($scheduleClassrooms, $maxConsecutiveHours)
+    public function checkConsecutiveSubjectHours(&$scheduleClassrooms, $maxSubjectHours)
     {
-        $violations = [];
-
-        foreach ($scheduleClassrooms as $classroom) {
-            foreach ($classroom['schedules'] as $schedule) {
+        foreach ($scheduleClassrooms as &$classroom) {
+            foreach ($classroom['schedules'] as &$schedule) {
                 $dailyLessons = [];
 
-                foreach ($schedule['lessons'] as $index => $lesson) {
+                foreach ($schedule['lessons'] as $index => &$lesson) {
                     if ($lesson !== null) {
                         $subjectId = $lesson['lesson']['id'];
 
@@ -242,15 +242,18 @@ class TabuSearchService
                         $dailyLessons[$subjectId]++;
 
                         // Check if the subject exceeds maxConsecutiveHours
-                        if ($dailyLessons[$subjectId] > $maxConsecutiveHours) {
-                            $violations[] = [
-                                'classroom_id' => $classroom['classroom']['id'],
-                                'schedule_id' => $schedule['id'],
-                                'lesson_index' => $index,
-                                'subject_id' => $subjectId,
-                                'hours' => $dailyLessons[$subjectId],
-                                'max_hours' => $maxConsecutiveHours
-                            ];
+                        if ($dailyLessons[$subjectId] > $maxSubjectHours) {
+                            if (isset($lesson['score'])) {
+                                $lesson['score'] += 20; // Penalty value
+                            } else {
+                                $lesson['score'] = 20; // Penalty value
+                            }
+
+                            if (!isset($lesson['errors'])) {
+                                $lesson['errors'] = ["Jam maksimal mata pelajaran berurutan melebihi $maxSubjectHours jam"];
+                            } else {
+                                $lesson['errors'] = array_merge($lesson['errors'], ["Jam maksimal mata pelajaran berurutan melebihi $maxSubjectHours jam"]);
+                            }
                         }
                     } else {
                         // Reset the counter if there is a break in the sequence
@@ -259,8 +262,6 @@ class TabuSearchService
                 }
             }
         }
-
-        return $violations;
     }
 
     public function sumTotalScore($scheduleClassrooms)
