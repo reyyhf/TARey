@@ -87,24 +87,30 @@ export default {
   <main class="schedule">
     <card-component
       title="Tabu Search"
-      icon="calendar-clock-outline"
+      icon="calendar-search-outline"
       :withLoading="isLoading"
     >
       <template v-slot:action>
         <div class="actions">
           <v-btn
+            outlined
             color="primary"
             @click="handleTabuSearch"
             :disabled="isLoading"
           >
-            Proses
+            <v-icon left> mdi-magnify </v-icon>
+            <template v-if="tabuSearchResult"> Proses ulang </template>
+            <template v-else> Proses </template>
           </v-btn>
           <v-btn
+            outlined
             color="success"
             v-if="tabuSearchResult"
             @click="showModal = true"
-            >Simpan</v-btn
           >
+            <v-icon left> mdi-content-save-plus </v-icon>
+            Simpan
+          </v-btn>
         </div>
       </template>
       <div class="table-schedule" v-dragscroll>
@@ -112,6 +118,9 @@ export default {
           v-if="scheduleDays.length && tabuSearchResult"
           :tabuSearchResult="tabuSearchResult"
         />
+        <div v-else-if="isLoading" class="text-center">
+          Mulai proses untuk menampilkan data
+        </div>
         <div v-else class="text-center">
           Mulai proses untuk menampilkan data
         </div>
