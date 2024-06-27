@@ -36,7 +36,7 @@ export default {
           pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight)
         }
 
-        pdf.save(`${this.data.title}.pdf`)
+        pdf.save(`penjadwalan.pdf`)
       })
     },
     downloadExcel() {
@@ -135,7 +135,7 @@ export default {
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = `${this.data.title}.xlsx`
+        a.download = `penjadwalan.xlsx`
         document.body.appendChild(a)
         a.click()
         document.body.removeChild(a)
