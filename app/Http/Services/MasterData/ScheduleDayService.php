@@ -33,9 +33,7 @@ class ScheduleDayService
             $scheduleDay->number = $index + 1;
         });
 
-        $response = ScheduleDayResource::collection($scheduleDays);
-
-        return $this->resultResponse('success', 'Data Berhasil Ditampilkan', 200, $response);
+        return $this->resultResponse('success', 'Data Berhasil Ditampilkan', 200, $scheduleDays);
     }
 
     public function getData($columns, $params)
@@ -47,7 +45,7 @@ class ScheduleDayService
     {
         $scheduleDay = $this->repository->store($inputData);
 
-        if (! $scheduleDay) {
+        if (!$scheduleDay) {
             throw new ErrorAPIException('Data Gagal Ditambahkan', 500);
         }
 
@@ -98,7 +96,7 @@ class ScheduleDayService
                         $item
                     );
 
-                    if (! $storeScheduleLessonHour) {
+                    if (!$storeScheduleLessonHour) {
                         DB::rollBack();
                         throw new ErrorAPIException('Gagal Menyimpan Data', 500);
                     }
@@ -113,7 +111,7 @@ class ScheduleDayService
                 if ($scheduleLessonHours) {
                     $destroyScheduleLessonHour = $scheduleLessonHours->delete();
 
-                    if (! $destroyScheduleLessonHour) {
+                    if (!$destroyScheduleLessonHour) {
                         DB::rollBack();
                         throw new ErrorAPIException('Gagal Menghapus Data', 500);
                     }
@@ -122,7 +120,7 @@ class ScheduleDayService
 
             $scheduleDay = $this->repository->update($id, $inputData);
 
-            if (! $scheduleDay) {
+            if (!$scheduleDay) {
                 DB::rollBack();
                 throw new ErrorAPIException('Data Gagal Diubah', 500);
             }
@@ -137,7 +135,7 @@ class ScheduleDayService
     {
         $scheduleDay = $this->repository->destroy($id);
 
-        if (! $scheduleDay) {
+        if (!$scheduleDay) {
             throw new ErrorAPIException('Data Gagal Dihapus', 500);
         }
 

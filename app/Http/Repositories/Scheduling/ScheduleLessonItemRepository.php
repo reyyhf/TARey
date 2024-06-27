@@ -29,4 +29,9 @@ class ScheduleLessonItemRepository extends BaseRepository
   {
     return $this->model->with(['lesson', 'teacher', 'scheduleLesson', 'scheduleLessonHour.scheduleDay'])->where('id', $id)->first();
   }
+
+  public function isConflict($scheduleLessonId, $scheduleLessonHourId)
+  {
+    return $this->model->where('schedule_lesson_id', $scheduleLessonId)->where('schedule_lesson_hour_id', $scheduleLessonHourId)->exists();
+  }
 }

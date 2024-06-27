@@ -6,6 +6,7 @@ use App\Exceptions\ErrorAPIException;
 use App\Helpers\ApiResponseTrait;
 use App\Http\Repositories\Scheduling\ScheduleLessonItemRepository;
 use App\Http\Requests\API\Scheduling\ScheduleLesson\CreateScheduleLessonItemValidation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ScheduleLessonItemService
@@ -36,13 +37,35 @@ class ScheduleLessonItemService
 
   public function store($inputData)
   {
-    $scheduleLessonItem = $this->repository->store($inputData);
+    $scheduleLessonItems = [];
+    DB::transaction(function () use (&$inputData, &$scheduleLessonItems) {
 
-    return $this->resultResponse('success', 'Data berhasil ditambahnkan', 201, $scheduleLessonItem);
+
+      foreach ($inputData['schedule_lesson_hour_ids'] as $scheduleLessonHourId) {
+
+        if ($this->repository->isConflict($inputData['schedule_lesson_id'], $scheduleLessonHourId)) {
+          DB::rollBack();
+          throw new ErrorAPIException('Terdapat jadwal yang konflik', 400);
+        }
+
+        $scheduleLessonItems[] = $this->repository->store([
+          'lesson_id' => $inputData['lesson_id'],
+          'teacher_id' => $inputData['teacher_id'],
+          'schedule_lesson_id' => $inputData['schedule_lesson_id'],
+          'schedule_lesson_hour_id' => $scheduleLessonHourId,
+        ]);
+      }
+    });
+
+    return $this->resultResponse('success', 'Data berhasil ditambahnkan', 201, $scheduleLessonItems);
   }
 
   public function update($id, $inputData)
   {
+    if ($this->repository->isConflict($inputData['schedule_lesson_id'], $inputData['schedule_lesson_hour_id'])) {
+      throw new ErrorAPIException('Terdapat jadwal yang konflik', 400);
+    }
+
     $scheduleLesson = $this->repository->update($id, $inputData);
     if (!$scheduleLesson) {
       throw new ErrorAPIException('Gagal diubah', 500);

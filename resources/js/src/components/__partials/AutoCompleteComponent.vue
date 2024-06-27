@@ -16,7 +16,7 @@ export default {
     rules: String,
     type: String,
     icon: String,
-    itemName: String,
+    itemName: [String, Function],
     itemValue: {
       type: String,
       default: 'id',

@@ -21,7 +21,7 @@ class ScheduleDayRepository extends BaseRepository
             ->whereHas('semester', function ($query) {
                 $query->where('is_active', true);
             })
-            ->with('semester')
+            ->with(['semester', 'scheduleLessonHours' => fn ($query) => $query->orderBy('order_direction')])
             ->orderBy('order_direction', 'asc')
             ->get();
     }

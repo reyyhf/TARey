@@ -66,6 +66,7 @@ const indexMixins = {
 
           setTimeout(() => {
             this.loadData()
+            this.closeModal()
           }, this.timeoutValue)
         })
         .catch((error) => {

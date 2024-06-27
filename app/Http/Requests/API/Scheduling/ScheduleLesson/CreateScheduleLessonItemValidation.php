@@ -17,7 +17,7 @@ class CreateScheduleLessonItemValidation extends BaseRequest
       'lesson_id' => 'required|uuid',
       'teacher_id' => 'required|uuid',
       'schedule_lesson_id' => 'required|uuid',
-      'schedule_lesson_hour_id' => 'required|uuid',
+      'schedule_lesson_hour_ids.*' => 'uuid',
     ];
   }
 }

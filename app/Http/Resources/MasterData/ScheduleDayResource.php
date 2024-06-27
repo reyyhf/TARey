@@ -21,6 +21,7 @@ class ScheduleDayResource extends JsonResource
             'semester_data' => $this->semester_data,
             'semester_id' => $this->semester_id,
             'total_hours' => $this->total_hours,
+            'schedule_lesson_hours' => $this->schedule_lesson_hours
         ];
     }
 }
