@@ -1,137 +1,189 @@
 <script>
-import { mapActions } from 'vuex'
+import scheduleMixin from '@Components/__mixins/scheduling/schedule'
+import ExcelJS from 'exceljs'
+
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 
 export default {
-  data() {
-    return {
-      scheduleDays: [],
-      scheduleLessons: [],
-      maxHours: 10,
-    }
-  },
+  name: 'Schedule',
+  mixins: [scheduleMixin],
   methods: {
-    ...mapActions({
-      fetchDays: 'scheduleDay/fetchScheduleDay',
-      fetchScheduleLessons: 'scheduleLesson/fetchScheduleLessons',
-    }),
-  },
-  created() {
-    this.fetchDays().then((result) => {
-      this.scheduleDays = result.data.data
-    })
+    downloadPdf() {
+      const table = this.$refs.tableTabuSearch.getElementsByTagName('table')[0]
 
-    this.fetchScheduleLessons().then((result) => {
-      this.scheduleLessons = result.data.data
-    })
+      // Use html2canvas to capture the table as an image
+      html2canvas(table).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png')
+        const pdf = new jsPDF('l', 'pt', [
+          table.scrollWidth,
+          table.scrollHeight,
+        ])
+        const imgProps = pdf.getImageProperties(imgData)
+        const pdfWidth = pdf.internal.pageSize.getWidth()
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
+
+        const pageHeight = pdf.internal.pageSize.getHeight()
+        let position = 0
+
+        // Add the image to the PDF
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight)
+
+        // If the content height is larger than the page height, add new pages
+        while (pdfHeight + position > pageHeight) {
+          position -= pageHeight
+          pdf.addPage()
+          pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight)
+        }
+
+        pdf.save(`${this.data.title}.pdf`)
+      })
+    },
+    downloadExcel() {
+      const table = this.$refs.tableTabuSearch.getElementsByTagName('table')[0]
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet('Sheet 1')
+
+      // Define the border style
+      const borderStyle = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      }
+
+      // Track merged cells to avoid overlapping
+      const mergedCells = []
+
+      // Check if a cell is already merged
+      function isMergedCell(row, col) {
+        return mergedCells.some(([startRow, startCol, endRow, endCol]) => {
+          return (
+            row >= startRow && row <= endRow && col >= startCol && col <= endCol
+          )
+        })
+      }
+
+      // Iterate over table rows and cells to add data to the worksheet
+      for (let rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
+        const row = table.rows[rowIndex]
+        let colIndex = 1
+
+        for (let cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
+          const cell = row.cells[cellIndex]
+
+          // Find the first non-merged cell
+          while (isMergedCell(rowIndex + 1, colIndex)) {
+            colIndex++
+          }
+
+          const excelCell = worksheet.getRow(rowIndex + 1).getCell(colIndex)
+          excelCell.value = cell.innerText
+          excelCell.border = borderStyle
+
+          // Handle colspan
+          if (cell.colSpan > 1) {
+            worksheet.mergeCells(
+              rowIndex + 1,
+              colIndex,
+              rowIndex + 1,
+              colIndex + cell.colSpan - 1
+            )
+            mergedCells.push([
+              rowIndex + 1,
+              colIndex,
+              rowIndex + 1,
+              colIndex + cell.colSpan - 1,
+            ])
+            for (let i = 0; i < cell.colSpan; i++) {
+              worksheet.getRow(rowIndex + 1).getCell(colIndex + i).border =
+                borderStyle
+            }
+            colIndex += cell.colSpan
+          } else {
+            colIndex++
+          }
+
+          // Handle rowspan
+          if (cell.rowSpan > 1) {
+            worksheet.mergeCells(
+              rowIndex + 1,
+              colIndex - (cell.colSpan || 1),
+              rowIndex + cell.rowSpan,
+              colIndex - (cell.colSpan || 1)
+            )
+            mergedCells.push([
+              rowIndex + 1,
+              colIndex - (cell.colSpan || 1),
+              rowIndex + cell.rowSpan,
+              colIndex - (cell.colSpan || 1),
+            ])
+            for (let i = 0; i < cell.rowSpan; i++) {
+              worksheet
+                .getRow(rowIndex + 1 + i)
+                .getCell(colIndex - (cell.colSpan || 1)).border = borderStyle
+            }
+          }
+        }
+      }
+
+      // Write the workbook to a file and trigger download
+      workbook.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `${this.data.title}.xlsx`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+      })
+    },
   },
 }
 </script>
 
 <template>
-  <main class="schedule">
-    <card-component title="Jadwal Mata Pelajaran" icon="calendar-clock-outline">
-      <div class="table-schedule">
-        <table v-if="scheduleDays.length && scheduleLessons.length">
-          <thead>
-            <tr>
-              <th rowspan="3">Kelas</th>
-            </tr>
-            <tr>
-              <th v-for="day in scheduleDays" :colspan="maxHours">
-                {{ day.name }}
-              </th>
-            </tr>
-            <tr>
-              <template v-for="day in scheduleDays">
-                <th
-                  colspan="1"
-                  class="text-center border"
-                  v-for="i in maxHours"
-                >
-                  {{ i }}
-                </th>
-              </template>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="lesson in scheduleLessons">
-              <td>
-                {{ lesson.classroom.name }}
-              </td>
-              <template v-for="day in scheduleDays">
-                <td
-                  colspan="1"
-                  class="text-center border"
-                  v-for="i in maxHours"
-                >
-                  <div>
-                    <span>
-                      {{
-                        lesson.schedule_lesson_items.find(
-                          (item) =>
-                            item.schedule_lesson_hour.started_at === i &&
-                            item.schedule_lesson_hour.schedule_day_id === day.id
-                        )?.lesson?.name
-                      }}
-                    </span>
-                    <span>
-                      {{
-                        lesson.schedule_lesson_items.find(
-                          (item) =>
-                            item.schedule_lesson_hour.started_at === i &&
-                            item.schedule_lesson_hour.schedule_day_id === day.id
-                        )?.teacher?.nuptk
-                      }}
-                    </span>
-                  </div>
-                </td>
-              </template>
-            </tr>
-          </tbody>
-        </table>
+  <div class="schedulue-lesson">
+    <card-component
+      title="Penjadwal Mata Pelajaran"
+      icon="calendar-clock-outline"
+    >
+      <template v-slot:action>
+        <div class="actions">
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn outlined color="primary" dark v-bind="attrs" v-on="on">
+                <v-icon left> mdi-content-save-plus </v-icon>
+                Download
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item style="cursor: pointer" @click="downloadPdf">
+                <v-icon v-text="'mdi-file-pdf-box'" class="mr-2"></v-icon>
+                <v-list-item-title>PDF</v-list-item-title>
+              </v-list-item>
+              <v-list-item style="cursor: pointer" @click="downloadExcel">
+                <v-icon v-text="'mdi-microsoft-excel'" class="mr-2"></v-icon>
+                <v-list-item-title>Excel</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+      </template>
+
+      <div class="table-schedule" v-dragscroll ref="tableTabuSearch">
+        <table-tabu-search
+          v-if="tabuSearchResult"
+          :tabuSearchResult="tabuSearchResult"
+        />
+        <div v-else class="text-center">
+          Mulai proses untuk menampilkan data
+        </div>
       </div>
     </card-component>
-  </main>
+  </div>
 </template>
-
-<style scoped>
-.table-schedule {
-  overflow-x: auto;
-  padding-bottom: 16px;
-}
-table {
-  overflow-x: hidden;
-}
-td {
-  min-width: 160px;
-}
-table,
-th,
-td {
-  border: 1px solid;
-  border-spacing: 0;
-  border-collapse: collapse;
-  padding: 16px;
-}
-
-.table-schedule::-webkit-scrollbar {
-  height: 8px;
-}
-
-/* Track */
-.table-schedule::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Handle */
-.table-schedule::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 16px;
-  cursor: pointer;
-}
-
-/* Handle on hover */
-.table-schedule::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-</style>
