@@ -172,7 +172,7 @@ table {
   border-radius: 16px;
 }
 td {
-  min-width: 160px;
+  min-width: 100px;
 }
 table,
 th,
