@@ -8,7 +8,7 @@ const tabuSearch = {
     fetchTabuSearch(_context, parameter) {
       return new Promise((resolve, reject) => {
         const tabuSize = parameter?.tabuSize || 100
-        const maxIteration = parameter?.maxIteration || 3000
+        const maxIteration = typeof parameter?.maxIteration === "undefined" ? 3000 : parameter.maxIteration;
         const path = `${tabuSearchUrl}?tabu_size=${tabuSize}&max_iteration=${maxIteration}`
         apiHandler
           .get(path, {

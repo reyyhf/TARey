@@ -140,29 +140,34 @@ class TabuSearchService
                         $lesson['errors'] = [];
                     }
 
-                    $violations = $this->checkTeachingHours($scheduleClassrooms, $maxTeachingHours);
-                    if (!empty($violations)) {
-                        foreach ($violations as $violation) {
-                            if ($scheduleClassroom['classroom']['id'] == $violation['classroom_id']) {
-                                if ($day['id'] == $violation['schedule_id']) {
-                                    $lesson = &$day['lessons'][$violation['lesson_index']];
-                                    if (isset($lesson['score'])) {
-                                        $lesson['score'] += 20; // or any value you want to penalize
-                                    } else {
-                                        $lesson['score'] = 20; // or any value you want to penalize
-                                    }
+                    $violations = $this->checkTeachingHours($scheduleClassrooms, $lesson['teacher_id'], $day['id'], $scheduleClassroom['classroom_id'], $lesson['lesson_id'], $maxTeachingHours);
+                    if ($violations) {
+                        if (isset($lesson['score'])) {
+                            $lesson['score'] += 20;
+                        } else {
+                            $lesson['score'] = 20;
+                        }
 
-                                    if (!isset($lesson['errors'])) {
-                                        $lesson['errors'] = ["Jam mengajar melebihi $maxTeachingHours jam"];
-                                    } else {
-                                        $lesson['errors'] = array_merge($lesson['errors'], ["Jam mengajar melebihi $maxTeachingHours jam"]);
-                                    }
-                                }
-                            }
+                        if (!isset($lesson['errors'])) {
+                            $lesson['errors'] = ["Jam mengajar melebihi $maxTeachingHours jam"];
+                        } else {
+                            $lesson['errors'] = array_merge($lesson['errors'], ["Jam mengajar melebihi $maxTeachingHours jam"]);
                         }
                     }
+                    $violations = $this->checkConsecutiveSubjectHours($scheduleClassrooms, $day['id'], $scheduleClassroom['classroom_id'], $lesson['lesson_id'], $maxTeachingHours);
+                    if ($violations) {
+                        if (isset($lesson['score'])) {
+                            $lesson['score'] += 20;
+                        } else {
+                            $lesson['score'] = 20;
+                        }
 
-                    $this->checkConsecutiveSubjectHours($scheduleClassrooms, $maxSubjectHours);
+                        if (!isset($lesson['errors'])) {
+                            $lesson['errors'] = ["Jam maksimal mata pelajaran berurutan melebihi $maxSubjectHours jam"];
+                        } else {
+                            $lesson['errors'] = array_merge($lesson['errors'], ["Jam maksimal mata pelajaran berurutan melebihi $maxSubjectHours jam"]);
+                        }
+                    }
                 }
             }
         }
@@ -185,83 +190,34 @@ class TabuSearchService
         return $count > 1;
     }
 
-    public function checkTeachingHours($scheduleClassrooms, $maxTeachingHours)
+    public function checkTeachingHours($scheduleClassrooms, $teacherId, $dayId, $classroomId, $lessonId, $maxTeachingHours)
     {
-        $violations = [];
-        foreach ($scheduleClassrooms as $classroom) {
-            foreach ($classroom['schedules'] as $schedule) {
-                $dailyTeaching = [];
-
-                foreach ($schedule['lessons'] as $index => $lesson) {
-                    if ($lesson !== null) {
-                        $teacherId = $lesson['teacher']['id'];
-                        $lessonId = $lesson['lesson']['id'];
-
-                        if (!isset($dailyTeaching[$teacherId])) {
-                            $dailyTeaching[$teacherId] = [];
-                        }
-
-                        if (!isset($dailyTeaching[$teacherId][$lessonId])) {
-                            $dailyTeaching[$teacherId][$lessonId] = 0;
-                        }
-
-                        $dailyTeaching[$teacherId][$lessonId]++;
-
-                        if ($dailyTeaching[$teacherId][$lessonId] > $maxTeachingHours) {
-                            $violations[] = [
-                                'classroom_id' => $classroom['classroom']['id'],
-                                'schedule_id' => $schedule['id'],
-                                'lesson_index' => $index,
-                                'hours' => $dailyTeaching[$teacherId][$lessonId],
-                                'max_hours' => $maxTeachingHours
-                            ];
-                        }
+        $count = 0;
+        foreach ($scheduleClassrooms as $scheduleClassroom) {
+            foreach ($scheduleClassroom['schedules'] as $day) {
+                foreach ($day['lessons'] as $index => $lesson) {
+                    if ($lesson && $teacherId == $lesson['teacher_id'] && $dayId == $day['id'] && $classroomId == $scheduleClassroom["classroom_id"] && $lessonId == $lesson['lesson_id']) {
+                        $count++;
                     }
                 }
             }
         }
-
-
-        return $violations;
+        return $count > $maxTeachingHours;
     }
 
-    public function checkConsecutiveSubjectHours(&$scheduleClassrooms, $maxSubjectHours)
+    public function checkConsecutiveSubjectHours($scheduleClassrooms, $dayId, $classroomId, $lessonId, $maxSubjectHours)
     {
-        foreach ($scheduleClassrooms as &$classroom) {
-            foreach ($classroom['schedules'] as &$schedule) {
-                $dailyLessons = [];
-
-                foreach ($schedule['lessons'] as $index => &$lesson) {
-                    if ($lesson !== null) {
-                        $subjectId = $lesson['lesson']['id'];
-
-                        if (!isset($dailyLessons[$subjectId])) {
-                            $dailyLessons[$subjectId] = 0;
-                        }
-
-                        $dailyLessons[$subjectId]++;
-
-                        // Check if the subject exceeds maxConsecutiveHours
-                        if ($dailyLessons[$subjectId] > $maxSubjectHours) {
-                            if (isset($lesson['score'])) {
-                                $lesson['score'] += 20; // Penalty value
-                            } else {
-                                $lesson['score'] = 20; // Penalty value
-                            }
-
-                            if (!isset($lesson['errors'])) {
-                                $lesson['errors'] = ["Jam maksimal mata pelajaran berurutan melebihi $maxSubjectHours jam"];
-                            } else {
-                                $lesson['errors'] = array_merge($lesson['errors'], ["Jam maksimal mata pelajaran berurutan melebihi $maxSubjectHours jam"]);
-                            }
-                        }
-                    } else {
-                        // Reset the counter if there is a break in the sequence
-                        $dailyLessons = [];
+        $count = 0;
+        foreach ($scheduleClassrooms as $scheduleClassroom) {
+            foreach ($scheduleClassroom['schedules'] as $day) {
+                foreach ($day['lessons'] as $index => $lesson) {
+                    if ($lesson && $dayId == $day['id'] && $classroomId == $scheduleClassroom["classroom_id"] && $lessonId == $lesson['lesson_id']) {
+                        $count++;
                     }
                 }
             }
         }
+        return $count > $maxSubjectHours;
     }
 
     public function sumTotalScore($scheduleClassrooms)

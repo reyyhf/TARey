@@ -15,7 +15,7 @@ const scheduleReportMixin = {
   },
   mounted() {
     this.isLoading = true
-    this.fetchTabuSearch({ tabuSize: 1, maxIteration: 1 })
+    this.fetchTabuSearch({ tabuSize: 1, maxIteration: 0 })
       .then((result) => {
         this?.$refs?.alert?.show(
           result?.data?.meta?.status,
