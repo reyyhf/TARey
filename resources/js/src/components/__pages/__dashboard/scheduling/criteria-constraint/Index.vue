@@ -21,7 +21,7 @@ export default {
                     </div>
                 </form-component>
         </card-component>
-        <card-component class="mt-5" title="Kriteria Constraint" icon="cogs" :withButtonAction="true" :buttonAction="buttonAction">
+        <card-component class="mt-5" title="Kriteria Constraint" icon="cogs">
             <table-component v-on:edit-data="view" v-on:destroy-data="showDestroyModal" :withLoading="isLoading"
                     :headerData="headers" :result="results" :isSearchHidden="true">
             </table-component>
