@@ -261,6 +261,18 @@ const routes = [
           title: 'Detail Jadwal Mata Pelajaran',
         },
       },
+      {
+        path: 'laporan-beban-mengajar/:id',
+        name: 'detail-teaching-load',
+        component: () =>
+          import(
+            '@Components/__pages/__dashboard/reporting/teaching-load-detail/Index.vue'
+          ),
+        meta: {
+          auth: true,
+          title: 'Laporan Beban Mengajar',
+        },
+      },
     ],
   },
   {

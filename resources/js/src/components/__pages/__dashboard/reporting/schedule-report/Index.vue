@@ -10,7 +10,7 @@ export default {
 <template>
   <div class="schedulue-lesson">
     <card-component
-      title="Jadwal Mata Pelajaran"
+      title="Laporan Jadwal Mata Pelajaran"
       icon="calendar-clock-outline"
       :withButtonAction="false"
       :buttonAction="buttonAction"

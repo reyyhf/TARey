@@ -6,7 +6,7 @@ import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 
 export default {
-  name: 'ScheduleReportDetail',
+  name: 'TeachingLoadReportDetail',
   mixins: [scheduleReportDetailMixin],
   methods: {
     downloadPdf() {
@@ -149,7 +149,7 @@ export default {
 <template>
   <div class="schedulue-lesson">
     <card-component
-      :title="`Laporan Jadwal: ${data?.title || ''}`"
+      :title="`Laporan Beban Mengajar: ${data?.title || ''}`"
       icon="calendar-clock-outline"
     >
       <template v-slot:action>
@@ -175,10 +175,7 @@ export default {
         </div>
       </template>
       <div class="table-schedule" v-dragscroll ref="tableTabuSearch">
-        <table-tabu-search v-if="data" :tabuSearchResult="data.data" />
-        <div v-else class="text-center">
-          Mulai proses untuk menampilkan data
-        </div>
+        {{ data?.data_teaching_weight }}
       </div>
     </card-component>
   </div>

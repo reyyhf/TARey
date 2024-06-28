@@ -153,7 +153,7 @@ export default {
       icon="calendar-clock-outline"
     >
       <template v-slot:action>
-        <div class="actions">
+        <div class="d-flex" style="gap: 16px">
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn outlined color="primary" dark v-bind="attrs" v-on="on">
@@ -172,6 +172,16 @@ export default {
               </v-list-item>
             </v-list>
           </v-menu>
+
+          <v-btn
+            outlined
+            color="success"
+            v-if="tabuSearchResult"
+            @click="showModal = true"
+          >
+            <v-icon left> mdi-content-save-plus </v-icon>
+            Simpan
+          </v-btn>
         </div>
       </template>
 
@@ -185,5 +195,29 @@ export default {
         </div>
       </div>
     </card-component>
+
+    <update-or-create-component
+      @closeAction="showModal = false"
+      :title="`Buat Laporan`"
+      v-model="showModal"
+    >
+      <template v-slot:form>
+        <form-component
+          ref="form"
+          :methodHandler="submit"
+          buttonSubmitText="Simpan"
+        >
+          <input-component
+            icon="progress-clock"
+            v-model="payload.title"
+            type="text"
+            defa
+            label="Judul Laporan"
+            rules="required"
+          >
+          </input-component>
+        </form-component>
+      </template>
+    </update-or-create-component>
   </div>
 </template>

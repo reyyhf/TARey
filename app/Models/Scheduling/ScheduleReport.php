@@ -9,6 +9,7 @@ class ScheduleReport extends Base
    protected $fillable = [
       'title',
       'data',
-      'reported_by'
+      'reported_by',
+      'data_teaching_weight'
    ];
 }

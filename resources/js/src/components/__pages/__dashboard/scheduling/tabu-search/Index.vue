@@ -12,7 +12,7 @@ export default {
       showModal: false,
       payload: {
         data: null,
-        title: 'Report TS',
+        title: 'Tahun Ajaran 2024/2025',
       },
     }
   },
