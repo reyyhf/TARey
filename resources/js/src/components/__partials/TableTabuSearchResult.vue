@@ -100,7 +100,7 @@ export default {
                     <span class="font-weight-bold">
                       {{ lesson.lesson.acronym }}</span
                     >
-                    <span> {{ lesson.teacher.name }}</span>
+                    <span> &nbsp;({{ lesson.teacher.name }})</span>
                   </div>
                 </template>
 
