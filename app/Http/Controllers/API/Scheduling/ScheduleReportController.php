@@ -39,6 +39,13 @@ class ScheduleReportController extends Controller
         return $this->serviceResponseHandler($semester);
     }
 
+    public function dashboard()
+    {
+        $scheduleReport = $this->service->dashboard();
+
+        return $this->serviceResponseHandler($scheduleReport);
+    }
+
 
     public function destroy($id)
     {

@@ -83,6 +83,19 @@ const scheduleReport = {
           })
       })
     },
+    fetchScheduleReportDashboard(context, parameter){
+        return new Promise((resolve, reject) => {
+            apiHandler
+              .get(`${scheduleReportApiUrl}/dashboard`)
+              .then((response) => {
+                context.commit('setScheduleReport', response.data.data)
+                resolve(response)
+              })
+              .catch((errors) => {
+                reject(errors)
+              })
+          })
+    }
   },
 }
 

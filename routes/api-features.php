@@ -157,6 +157,7 @@ Route::prefix('tabu-search')->name('tabu-search')->group(function () {
 Route::prefix('schedule-report')->name('schedule-report.')->group(function () {
     Route::get('/', [ScheduleReportController::class, 'index'])->name('index');
     Route::post('/store', [ScheduleReportController::class, 'store'])->name('store');
+    Route::get('/dashboard', [ScheduleReportController::class, 'dashboard'])->name('dashboard');
     Route::get('/{id}', [ScheduleReportController::class, 'show'])->name('show');
     Route::delete('/destroy/{id}', [ScheduleReportController::class, 'destroy'])->name('destroy');
 });
