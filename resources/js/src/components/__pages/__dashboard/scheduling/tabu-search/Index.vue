@@ -142,7 +142,7 @@ export default {
             icon="progress-clock"
             v-model="payload.title"
             type="text"
-            defa
+            default
             label="Judul Laporan"
             rules="required"
           >
