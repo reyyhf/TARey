@@ -52,9 +52,9 @@ export default {
                         label="Hak Akses Pengguna" :options="userRoleAccesses" rules="required">
                     </radio-button-component>
 
-                    <radio-button-component v-if="payload.role_name === 'Guru'" v-model="payload.user_status_id"
+                    <!-- <radio-button-component v-if="payload.role_name === 'Guru'" v-model="payload.user_status_id"
                         icon="account-star" type="text" label="Status Guru" :options="userStatuses" rules="required">
-                    </radio-button-component>
+                    </radio-button-component> -->
                 </form-component>
             </template>
         </update-or-create-component>
@@ -89,9 +89,9 @@ export default {
                     label="Hak Akses Pengguna">
                 </input-component>
 
-                <input-component v-if="payload.user_status_name" :disabled="true" v-model="payload.user_status_name"
+                <!-- <input-component v-if="payload.user_status_name" :disabled="true" v-model="payload.user_status_name"
                     icon="account-star" type="text" label="Status Guru">
-                </input-component>
+                </input-component> -->
             </template>
         </update-or-create-component>
 
