@@ -1,7 +1,7 @@
 <script>
-import scheduleReportDetailMixin from '@Components/__mixins/reporting/schedule-report-detail'
+import scheduleReportDetailMixin from '@Components/__mixins/reporting/teaching-load-detail'
 import ExcelJS from 'exceljs'
-
+import { dragscroll } from 'vue-dragscroll'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 
@@ -36,7 +36,7 @@ export default {
           pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight)
         }
 
-        pdf.save(`${this.data.title}.pdf`)
+        pdf.save(`laporan_beban_mengajar_${this.data.title}.pdf`)
       })
     },
     downloadExcel() {
@@ -135,13 +135,29 @@ export default {
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = `${this.data.title}.xlsx`
+        a.download = `laporan_beban_mengajar_${this.data.title}.xlsx`
         document.body.appendChild(a)
         a.click()
         document.body.removeChild(a)
         URL.revokeObjectURL(url)
       })
     },
+  },
+  mounted() {
+    this.fetchDays()
+      .then((result) => {
+        this.days = result.data.data
+      })
+      .catch((err) => {
+        this?.$refs?.alert?.show(
+          result?.data?.meta?.status || 'error',
+          result?.data?.meta?.message || 'error'
+        )
+        console.log(err)
+      })
+  },
+  directives: {
+    dragscroll,
   },
 }
 </script>
@@ -174,9 +190,131 @@ export default {
           </v-menu>
         </div>
       </template>
-      <div class="table-schedule" v-dragscroll ref="tableTabuSearch">
-        {{ data?.data_teaching_weight }}
+      <div class="table-schedule" ref="tableTabuSearch" v-dragscroll>
+        <table v-if="scheduleDays.length">
+          <thead>
+            <tr>
+              <th rowspan="3">Pengajar</th>
+              <th rowspan="3">Kelas</th>
+            </tr>
+            <tr>
+              <th v-for="day in scheduleDays" :colspan="day.total_hours">
+                {{ day.name }}
+              </th>
+            </tr>
+            <tr>
+              <template v-for="day in scheduleDays">
+                <th
+                  colspan="1"
+                  class="text-center border"
+                  v-for="i in day.total_hours"
+                >
+                  {{ i }}
+                </th>
+              </template>
+            </tr>
+          </thead>
+          <tbody>
+            <template v-for="teacher in data.data_teaching_weight">
+              <tr>
+                <td
+                  :rowspan="teacher.classrooms.length + 1"
+                  v-ripple
+                  style="background-color: #e8f5e9"
+                >
+                  {{ teacher.name }}
+                </td>
+              </tr>
+              <tr v-for="classroom in teacher.classrooms">
+                <td v-ripple style="background-color: #f0f4c3">
+                  {{ classroom.name }}
+                </td>
+                <template v-for="days in classroom.schedules">
+                  <td v-for="lesson in days.lessons" v-ripple>
+                    {{ lesson?.lesson?.name }}
+                  </td>
+                </template>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </div>
     </card-component>
   </div>
 </template>
+
+<style scoped>
+.table-schedule {
+  overflow-x: auto;
+  padding-bottom: 16px;
+}
+.table-schedule * {
+  user-select: none;
+}
+table {
+  overflow-x: hidden;
+  border-radius: 16px;
+}
+td {
+  min-width: 100px;
+}
+table,
+th,
+td {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-spacing: 0;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+table {
+  border-radius: 16px;
+}
+
+.table-schedule::-webkit-scrollbar {
+  height: 8px;
+}
+
+/* Track */
+.table-schedule::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+.table-schedule::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+/* Handle on hover */
+.table-schedule::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+.actions {
+  display: flex;
+  justify-content: end;
+  gap: 16px;
+  align-items: center;
+}
+td:not(.lesson),
+th {
+  padding: 16px;
+}
+tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+.lesson {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+}
+.constraint-error {
+  background-color: #f34545;
+  color: white;
+}
+</style>

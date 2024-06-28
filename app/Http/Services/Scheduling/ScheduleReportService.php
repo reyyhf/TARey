@@ -31,6 +31,7 @@ class ScheduleReportService
         $report = ScheduleReport::where('id', $id)->first();
 
         $report['data'] = json_decode($report['data']);
+        $report['data_teaching_weight'] = json_decode($report['data_teaching_weight']);
 
         return $this->resultResponse('success', 'Data berhasil ditampilkan', 200, $report);
     }

@@ -11,6 +11,10 @@ export default {
     icon: String,
     withLoading: Boolean,
     withViewData: Boolean,
+    withUpdate: {
+      type: Boolean,
+      default: true,
+    },
     withDetail: Boolean,
     withDestroyData: {
       type: Boolean,
@@ -25,9 +29,9 @@ export default {
       default: false,
     },
     isSearchHidden: {
-            type: Boolean,
-            default : false
-    }
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     hideFooterAction() {
@@ -58,7 +62,8 @@ export default {
             dense
             v-model="search"
             label="Cari Data"
-            class="mx-4 pt-4" :class="{ 'd-none': isSearchHidden }"
+            class="mx-4 pt-4"
+            :class="{ 'd-none': isSearchHidden }"
           ></v-text-field>
         </v-col>
 
@@ -131,7 +136,7 @@ export default {
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-container class="d-flex justify-center">
+      <v-container class="d-flex justify-center" style="gap: 12px">
         <v-btn
           v-if="withViewData"
           outlined
@@ -151,10 +156,10 @@ export default {
           Detail
         </v-btn>
         <v-btn
+          v-if="withUpdate"
           outlined
           v-on:click="$emit('edit-data', item.id)"
           color="primary"
-          class="mx-3"
         >
           <v-icon left> mdi-pencil </v-icon>
           Edit
