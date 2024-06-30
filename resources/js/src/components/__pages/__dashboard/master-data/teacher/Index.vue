@@ -37,7 +37,14 @@ export default {
               </th>
               <th rowspan="2" colspan="1">Status</th>
               <th rowspan="2" colspan="1">Beban Mengajar</th>
-              <th rowspan="2" colspan="1">Aksi</th>
+              <th
+                rowspan="2"
+                colspan="1"
+                style="text-align: center"
+                align="center"
+              >
+                Aksi
+              </th>
             </tr>
             <tr>
               <td colspan="1" rowspan="1">X</td>
