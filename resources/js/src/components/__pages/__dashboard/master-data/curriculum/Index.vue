@@ -14,9 +14,111 @@ export default {
         <card-component title="Struktur Kurikulum" icon="notebook-multiple" :withButtonAction="true"
             :buttonAction="buttonAction">
 
-            <table-component v-on:edit-data="view" v-on:destroy-data="showDestroyModal" :withLoading="isLoading"
-                :headerData="headers" :result="results">
-            </table-component>
+            <v-data-table :headers="[]" :items="results" class="elevation-1">
+        <template v-slot:header>
+          <thead>
+            <tr>
+              <th rowspan="2" colspan="1">No</th>
+              <th rowspan="2" colspan="1">Nama Mata Pelajaran</th>
+              <th
+                rowspan="1"
+                colspan="6"
+                style="text-align: center"
+                align="center"
+              >
+                Jadwal Minggu / Jam
+              </th>
+              <th
+                rowspan="2"
+                colspan="1"
+                style="text-align: center"
+                align="center"
+              >
+                Aksi
+              </th>
+            </tr>
+            <tr>
+              <td colspan="1" rowspan="1">X IPA</td>
+              <td colspan="1" rowspan="1">X IPS</td>
+              <td colspan="1" rowspan="1">XI IPA</td>
+              <td colspan="1" rowspan="1">XI IPS</td>
+              <td colspan="1" rowspan="1">XII IPA</td>
+              <td colspan="1" rowspan="1">XII IPS</td>
+            </tr>
+          </thead>
+        </template>
+        <template v-slot:body="{ items }">
+          <tbody>
+            <tr v-for="(curriculumLesson, index) in items" :key="curriculumLesson.id">
+              <td>
+                {{ index + 1 }}
+              </td>
+              <td>
+                {{ curriculumLesson.lesson_name }}
+              </td>
+              <td>
+                {{
+                    curriculumLesson.curricular.find((classroom) =>
+                    classroom.classroom_label.startsWith('X IPA')
+                    )?.maximum_hours_per_week || ''
+                }}
+              </td>
+              <td>
+                {{
+                  curriculumLesson.curricular.find((classroom) =>
+                    classroom.classroom_label.startsWith('X IPS')
+                    )?.maximum_hours_per_week || ''
+                }}
+              </td>
+              <td>
+                {{
+                  curriculumLesson.curricular.find((classroom) =>
+                    classroom.classroom_label.startsWith('XI IPA')
+                    )?.maximum_hours_per_week || ''
+                }}
+              </td>
+              <td>
+                {{
+                 curriculumLesson.curricular.find((classroom) =>
+                    classroom.classroom_label.startsWith('XI IPS')
+                    )?.maximum_hours_per_week || ''
+                }}
+              </td>
+              <td>
+                {{
+                  curriculumLesson.curricular.find((classroom) =>
+                    classroom.classroom_label.startsWith('XII IPA')
+                    )?.maximum_hours_per_week || ''
+                }}
+              </td>
+              <td>
+                {{
+                  curriculumLesson.curricular.find((classroom) =>
+                    classroom.classroom_label.startsWith('XII IPS')
+                    )?.maximum_hours_per_week || ''
+                }}
+              </td>
+              <td>
+                <v-container class="d-flex justify-center" style="gap: 12px">
+
+                  <v-btn outlined v-on:click="view(curriculumLesson.id)" color="primary">
+                    <v-icon left> mdi-pencil </v-icon>
+                    Edit
+                  </v-btn>
+                  <v-btn
+                    outlined
+                    v-on:click="showDestroyModal(curriculumLesson.id)"
+                    color="error"
+                  >
+                    <v-icon left> mdi-delete </v-icon>
+                    Hapus
+                  </v-btn>
+                </v-container>
+              </td>
+            </tr>
+          </tbody>
+        </template>
+      </v-data-table>
         </card-component>
 
         <update-or-create-component :closeAction="closeModal" :title="`${updateOrCreateTitle} Data`" v-model="showModal"
