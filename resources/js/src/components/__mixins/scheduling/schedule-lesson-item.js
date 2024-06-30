@@ -108,7 +108,7 @@ const scheduleLessonItemMixin = {
       await this.fetchTeachers()
         .then((result) => {
           this.teachers = result.data.data.filter((teacher) =>
-            teacher.teacher_lessons.includes(this.payload.lesson_id)
+            teacher.teacher_lessons?.includes(this.payload.lesson_id)
           )
         })
         .catch((err) => {
