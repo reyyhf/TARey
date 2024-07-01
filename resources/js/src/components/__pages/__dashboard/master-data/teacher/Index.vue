@@ -67,7 +67,7 @@ export default {
               </td>
               <td>
                 {{
-                  teacher.teacher_classrooms_name.some((classroom) =>
+                  teacher.teacher_classrooms_name?.some((classroom) =>
                     classroom.name.startsWith('X ')
                   )
                     ? '✔️'
@@ -76,7 +76,7 @@ export default {
               </td>
               <td>
                 {{
-                  teacher.teacher_classrooms_name.some((classroom) =>
+                  teacher.teacher_classrooms_name?.some((classroom) =>
                     classroom.name.startsWith('XI ')
                   )
                     ? '✔️'
@@ -85,7 +85,7 @@ export default {
               </td>
               <td>
                 {{
-                  teacher.teacher_classrooms_name.some((classroom) =>
+                  teacher.teacher_classrooms_name?.some((classroom) =>
                     classroom.name.startsWith('XII ')
                   )
                     ? '✔️'
