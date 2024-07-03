@@ -13,6 +13,8 @@ import RadioButtonComponent from '@Components/__partials/RadioButtonComponent.vu
 import AutoCompleteComponent from '@Components/__partials/AutoCompleteComponent.vue'
 import SwitchComponent from '@Components/__partials/SwitchComponent.vue'
 import TableTabuSearchResult from '@Components/__partials/TableTabuSearchResult.vue'
+import BarChart from '@Components/__partials/BarChart.vue'
+import PieChart from '@Components/__partials/PieChart.vue'
 
 Vue.component('input-component', InputComponent)
 Vue.component('input-password', InputPasswordComponent)
@@ -27,6 +29,8 @@ Vue.component('radio-button-component', RadioButtonComponent)
 Vue.component('auto-complete-component', AutoCompleteComponent)
 Vue.component('switch-component', SwitchComponent)
 Vue.component('table-tabu-search', TableTabuSearchResult)
+Vue.component('bar-chart', BarChart)
+Vue.component('pie-chart', PieChart)
 
 // Global Function Handlers
 

@@ -10,6 +10,11 @@ export default {
       type: Object,
       required: false,
     },
+    onlyToday: {
+        type: Boolean,
+        default : false,
+        required : false
+    }
   },
   data() {
     return {
@@ -54,12 +59,12 @@ export default {
           <th rowspan="3">Kelas</th>
         </tr>
         <tr>
-          <th v-for="day in scheduleDays" :colspan="day.total_hours">
+          <th v-for="day in scheduleDays" :colspan="day.total_hours" v-if="(day.order_direction === new Date().getDay()) && onlyToday || !onlyToday">
             {{ day.name }}
           </th>
         </tr>
         <tr>
-          <template v-for="day in scheduleDays">
+          <template v-for="day in scheduleDays" v-if="(day.order_direction === new Date().getDay()) && onlyToday || !onlyToday">
             <th
               colspan="1"
               class="text-center border"
@@ -75,7 +80,7 @@ export default {
           <td>
             {{ result.classroom.name }}
           </td>
-          <template v-for="day in result.schedules">
+          <template v-for="day in result.schedules" v-if="(day.order_direction === new Date().getDay()) && onlyToday || !onlyToday">
             <td
               v-ripple
               colspan="1"

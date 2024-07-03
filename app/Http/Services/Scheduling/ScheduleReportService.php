@@ -39,8 +39,17 @@ class ScheduleReportService
     public function dashboard()
     {
         $report = ScheduleReport::latest()->first();
+        $teacherHonorary = Profile::with('userStatus')->whereHas('userStatus', function ($query) {
+            $query->whereName('Honorer');
+        })->get();
+        $teacherPermanent = Profile::with('userStatus')->whereHas('userStatus', function ($query) {
+            $query->whereName('Tetap');
+        })->get();
 
         $report['data'] = json_decode($report['data']);
+        $report['teacherHonorary'] = $teacherHonorary;
+        $report['teacherPermanent'] = $teacherPermanent;
+
 
         return $this->resultResponse('success', 'Data berhasil ditampilkan', 200, $report);
     }
