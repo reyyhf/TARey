@@ -146,7 +146,18 @@ export default {
     data() {
         return {
             barChartOptions: {
-                responsive: true,
+                responsive : true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true
+                    },
+                    datalabels: {
+                        display: false
+                    }
+                }
             },
             pieChartOptions: {
                 responsive: true,
@@ -185,7 +196,7 @@ export default {
             return {
                 labels: [ 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat' ],
                 datasets: [{
-                    backgroundColor: ['#102C57'],
+                    backgroundColor: ['#DA251C'],
                     data: this.conflicts
                 }]
             }
@@ -194,10 +205,13 @@ export default {
             return {
                 labels: ['Tetap', 'Honorer'],
                 datasets: [{
-                    backgroundColor: ['#102C57', '#fffff'],
+                    backgroundColor: ['#29166F', '#DA251C'],
                     data: [this.data?.teacherPermanent.length, this.data?.teacherHonorary.length]
                 }]
             }
+        },
+        routeUrl() {
+            return `/dashboard/detail-laporan-penjadwalan/${this.data?.id}`;
         }
     }
 }
@@ -214,6 +228,13 @@ export default {
         <card-component
         :title="`Jumlah Conflict`"
         icon="chart-bar" class="flex-fill chart-card">
+        <template v-slot:action>
+            <div class="actions">
+                <v-btn outlined color="primary" :href="routeUrl">
+                    <v-icon left> mdi-eye </v-icon> Detail
+                </v-btn>
+            </div>
+        </template>
         <bar-chart :data="barChartData" :options="barChartOptions" class="chart"></bar-chart>
         </card-component>
     </div>
@@ -266,5 +287,12 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%; /* Ensure the chart takes up full height of the card */
+}
+
+.actions {
+  display: flex;
+  justify-content: end;
+  gap: 16px;
+  align-items: center;
 }
 </style>
