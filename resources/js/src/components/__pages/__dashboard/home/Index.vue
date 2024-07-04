@@ -146,7 +146,18 @@ export default {
     data() {
         return {
             barChartOptions: {
-                responsive: true,
+                responsive : true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true
+                    },
+                    datalabels: {
+                        display: false
+                    }
+                }
             },
             pieChartOptions: {
                 responsive: true,
@@ -185,7 +196,7 @@ export default {
             return {
                 labels: [ 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat' ],
                 datasets: [{
-                    backgroundColor: ['#102C57'],
+                    backgroundColor: ['#DA251C'],
                     data: this.conflicts
                 }]
             }
@@ -194,7 +205,7 @@ export default {
             return {
                 labels: ['Tetap', 'Honorer'],
                 datasets: [{
-                    backgroundColor: ['#102C57', '#fffff'],
+                    backgroundColor: ['#29166F', '#DA251C'],
                     data: [this.data?.teacherPermanent.length, this.data?.teacherHonorary.length]
                 }]
             }
