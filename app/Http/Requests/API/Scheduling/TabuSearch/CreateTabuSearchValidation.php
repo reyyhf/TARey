@@ -16,6 +16,7 @@ class CreateTabuSearchValidation extends BaseRequest
         return [
             'tabu_size' => 'numeric|min:1',
             'max_iteration' => 'numeric|min:0',
+            'uuid' => 'uuid'
         ];
     }
 }

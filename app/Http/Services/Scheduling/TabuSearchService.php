@@ -11,7 +11,10 @@ use App\Models\MasterData\ScheduleLessonHour;
 use App\Models\Scheduling\CriteriaConstraint;
 use App\Models\Scheduling\ScheduleLesson;
 use App\Models\Scheduling\ScheduleLessonItem;
+use App\Models\Scheduling\TabuSearchResult;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TabuSearchService
 {
@@ -36,7 +39,7 @@ class TabuSearchService
         $scheduleClassrooms = $this->evaluateSchedules($scheduleClassrooms);
 
 
-        $result = $this->tabuSearch($scheduleClassrooms, $tabuSize, $maxIteration);
+        $result = $this->tabuSearch($scheduleClassrooms, $tabuSize, $maxIteration, isset($inputData['uuid']) ? $inputData['uuid'] : null);
         $result['result'] = $this->fillLessonsWithHour($result['result']);
 
         return $this->resultResponse('success', 'Data berhasil ditampilkan', 200, $result);
@@ -261,12 +264,31 @@ class TabuSearchService
         return $totalScore;
     }
 
-    private function tabuSearch($initSchedule, $tabuSize, $maxIteration)
+    private function tabuSearch($initSchedule, $tabuSize, $maxIteration, $uuid)
     {
-        $currentSolution = $this->deepClone($initSchedule);
-        $bestSolution = $this->deepClone($initSchedule);
-        $bestScore = $this->sumTotalScore($bestSolution);
-        $tabuList = [];
+        if ($uuid) {
+            $tempPath = storage_path("app/temp/$uuid.json");
+
+            if (!File::exists($tempPath)) {
+                return response()->json(['message' => 'File not found'], 404);
+            }
+
+            $jsonData = File::get($tempPath);
+
+            // Decode JSON ke array PHP
+            $data = json_decode($jsonData, true);
+
+            $currentSolution = $data['currentSolution'];
+            $bestSolution = $data['bestSolution'];
+            $bestScore = $data['bestScore'];
+            $tabuList = $data['tabuList'];
+
+        } else {
+            $currentSolution = $this->deepClone($initSchedule);
+            $bestSolution = $this->deepClone($initSchedule);
+            $bestScore = $this->sumTotalScore($bestSolution);
+            $tabuList = [];
+        }
 
         for ($iteration = 0; $iteration < $maxIteration; $iteration++) {
             $newSolution = $this->generateNewSolution($currentSolution);
@@ -298,9 +320,23 @@ class TabuSearchService
             'tabuList' => $tabuList
         ];
 
+        $jsonData = json_encode($data);
+        $tempPath = storage_path('app/temp');
+
+        if (!File::exists($tempPath)) {
+            File::makeDirectory($tempPath, 0755, true);
+        }
+
+        $uuid = Str::uuid()->toString();
+
+        $fileName = "$uuid.json";
+
+        File::put($tempPath . '/' . $fileName, $jsonData);
+
         return [
             'result' => $bestSolution,
             'score' => $bestScore,
+            'uuid' => $uuid
         ];
     }
 

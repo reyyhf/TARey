@@ -25,7 +25,7 @@ export default {
     }),
     handleTabuSearch() {
       this.isLoading = true
-      this.fetchTabuSearch()
+      this.fetchTabuSearch({uuid : this.tabuSearchResult?.data?.data?.uuid})
         .then((result) => {
           this?.$refs?.alert?.show(
             result?.data?.meta?.status,
