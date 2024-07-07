@@ -35,6 +35,7 @@ class TabuSearchService
         $scheduleClassrooms = $this->initSolutions($scheduleDays);
         $scheduleClassrooms = $this->evaluateSchedules($scheduleClassrooms);
 
+
         $result = $this->tabuSearch($scheduleClassrooms, $tabuSize, $maxIteration);
         $result['result'] = $this->fillLessonsWithHour($result['result']);
 
@@ -99,13 +100,17 @@ class TabuSearchService
             foreach ($scheduleClassroom['schedules'] as &$day) {
                 foreach ($day['lessons'] as $index => &$lesson) {
                     if ($lesson) {
-                        $prevLesson = $day['lessons'][$index - 1];
-                        $prevLesson2 = $day['lessons'][$index - 2];
-                        if ($prevLesson2 && $prevLesson && $prevLesson2['id'] != $prevLesson2['id'] || $prevLesson && !$prevLesson2) {
-                            $nextLessonIndex  = $this->findIndexByKeyValue($scheduleLessonItems, 'id', $prevLesson['id']);
+                        $prevLesson = isset($day['lessons'][$index - 1]) ? $day['lessons'][$index - 1] : null;
+                        $prevLesson2 = isset($day['lessons'][$index - 2]) ? $day['lessons'][$index - 2] : null;
+
+                        if ($prevLesson2 && $prevLesson && $prevLesson2['lesson_id'] != $prevLesson['lesson_id'] || $prevLesson && !$prevLesson2) {
+                            $nextLessonIndex = $this->findIndexByKeyValue($scheduleLessonItems, 'lesson_id', $prevLesson['lesson_id']);
                             if ($nextLessonIndex != -1) {
                                 $day['lessons'][$index] = $scheduleLessonItems[$nextLessonIndex];
-                                $scheduleLessonItems = array_splice($scheduleLessonItems, $nextLessonIndex, 1);
+                                array_splice($scheduleLessonItems, $nextLessonIndex, 1);
+                                // unset($scheduleLessonItems[$nextLessonIndex]);
+                            } else {
+                                $day['lessons'][$index] = array_pop($scheduleLessonItems);
                             }
                         } else {
                             $day['lessons'][$index] = array_pop($scheduleLessonItems);
@@ -285,6 +290,13 @@ class TabuSearchService
                 $currentSolution = $this->deepClone($newSolution);
             }
         }
+
+        $data = [
+            'bestSolution' => $bestSolution,
+            'bestScore' => $bestScore,
+            'currentSolution' => $currentSolution,
+            'tabuList' => $tabuList
+        ];
 
         return [
             'result' => $bestSolution,
