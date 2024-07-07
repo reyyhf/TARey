@@ -8,19 +8,21 @@ use App\Http\Services\Scheduling\TabuSearchService;
 
 class TabuSearchController extends Controller
 {
-  protected TabuSearchService $service;
+    protected TabuSearchService $service;
 
-  public function __construct(TabuSearchService $service)
-  {
-    $this->service = $service;
-  }
+    public function __construct(TabuSearchService $service)
+    {
+        $this->service = $service;
+    }
 
-  public function search(CreateTabuSearchValidation $request)
-  {
-    $inputData = $request->validated();
+    public function search(CreateTabuSearchValidation $request)
+    {
+        set_time_limit(3600);
 
-    $createClassroom = $this->service->search($inputData);
+        $inputData = $request->validated();
 
-    return $this->serviceResponseHandler($createClassroom);
-  }
+        $createClassroom = $this->service->search($inputData);
+
+        return $this->serviceResponseHandler($createClassroom);
+    }
 }
