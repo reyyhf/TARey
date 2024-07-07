@@ -11,10 +11,10 @@ export default {
       required: false,
     },
     onlyToday: {
-        type: Boolean,
-        default : false,
-        required : false
-    }
+      type: Boolean,
+      default: false,
+      required: false,
+    },
   },
   data() {
     return {
@@ -59,12 +59,25 @@ export default {
           <th rowspan="3">Kelas</th>
         </tr>
         <tr>
-          <th v-for="day in scheduleDays" :colspan="day.total_hours" v-if="(day.order_direction === new Date().getDay()) && onlyToday || !onlyToday">
+          <th
+            v-for="day in scheduleDays"
+            :colspan="day.total_hours"
+            v-if="
+              (day.order_direction === new Date().getDay() && onlyToday) ||
+              !onlyToday
+            "
+          >
             {{ day.name }}
           </th>
         </tr>
         <tr>
-          <template v-for="day in scheduleDays" v-if="(day.order_direction === new Date().getDay()) && onlyToday || !onlyToday">
+          <template
+            v-for="day in scheduleDays"
+            v-if="
+              (day.order_direction === new Date().getDay() && onlyToday) ||
+              !onlyToday
+            "
+          >
             <th
               colspan="1"
               class="text-center border"
@@ -80,7 +93,13 @@ export default {
           <td>
             {{ result.classroom.name }}
           </td>
-          <template v-for="day in result.schedules" v-if="(day.order_direction === new Date().getDay()) && onlyToday || !onlyToday">
+          <template
+            v-for="day in result.schedules"
+            v-if="
+              (day.order_direction === new Date().getDay() && onlyToday) ||
+              !onlyToday
+            "
+          >
             <td
               v-ripple
               colspan="1"
@@ -161,6 +180,9 @@ export default {
       </tbody>
     </table>
     <div v-else class="text-center">Mulai proses untuk menampilkan data</div>
+    <div v-if="tabuSearchResult">
+      Jumlah error: {{ tabuSearchResult.score / 20 }}
+    </div>
   </div>
 </template>
 

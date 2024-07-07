@@ -10,7 +10,7 @@ const tabuSearch = {
         const tabuSize = parameter?.tabuSize || 10
         const maxIteration =
           typeof parameter?.maxIteration === 'undefined'
-            ? 10
+            ? 50
             : parameter.maxIteration
         const path = `${tabuSearchUrl}?tabu_size=${tabuSize}&max_iteration=${maxIteration}${parameter.uuid ? `&uuid=${parameter.uuid}` : ''}` // prettier-ignore
         apiHandler
