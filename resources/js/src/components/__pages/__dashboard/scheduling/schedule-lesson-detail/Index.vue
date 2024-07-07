@@ -31,12 +31,18 @@ export default {
       this.dialog = false
       this.dataId = null
     },
+    goBack() {
+      this.$router.go(-1);
+    },
   },
 }
 </script>
 
 <template>
   <main class="schedule-lesson-detail">
+    <v-btn @click="goBack" class="mb-5" color="primary">
+        <v-icon left> mdi-arrow-left </v-icon> Back
+    </v-btn>
     <card-component
       :title="`Jadwal Mata Pelajaran ${scheduleLesson?.classroom.name || ''}`"
       icon="calendar-clock-outline"
