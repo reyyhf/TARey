@@ -136,7 +136,7 @@ class TabuSearchService
         return -1;
     }
 
-    public function evaluateSchedules($scheduleClassrooms)
+    public function evaluateSchedules(&$scheduleClassrooms)
     {
         $constraint = CriteriaConstraint::where('is_dynamic', true)->first();
 
@@ -144,9 +144,9 @@ class TabuSearchService
         $maxSubjectHours = $constraint->max_subject_hours;
 
         // Check constraint
-        foreach ($scheduleClassrooms as $scheduleClassroom) {
-            foreach ($scheduleClassroom['schedules'] as $day) {
-                foreach ($day['lessons'] as $index => $lesson) {
+        foreach ($scheduleClassrooms as &$scheduleClassroom) {
+            foreach ($scheduleClassroom['schedules'] as &$day) {
+                foreach ($day['lessons'] as $index => &$lesson) {
                     if (!$lesson)
                         continue;
 
@@ -282,7 +282,6 @@ class TabuSearchService
             $bestSolution = $data['bestSolution'];
             $bestScore = $data['bestScore'];
             $tabuList = $data['tabuList'];
-
         } else {
             $currentSolution = $this->deepClone($initSchedule);
             $bestSolution = $this->deepClone($initSchedule);

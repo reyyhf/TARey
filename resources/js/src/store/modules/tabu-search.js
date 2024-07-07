@@ -7,10 +7,10 @@ const tabuSearch = {
   actions: {
     fetchTabuSearch(_context, parameter) {
       return new Promise((resolve, reject) => {
-        const tabuSize = parameter?.tabuSize || 1
+        const tabuSize = parameter?.tabuSize || 100
         const maxIteration =
           typeof parameter?.maxIteration === 'undefined'
-            ? 1
+            ? 5
             : parameter.maxIteration
         const path = `${tabuSearchUrl}?tabu_size=${tabuSize}&max_iteration=${maxIteration}${parameter.uuid ? `&uuid=${parameter.uuid}` : ''}` // prettier-ignore
         apiHandler
