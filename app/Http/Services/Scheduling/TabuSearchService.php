@@ -99,13 +99,33 @@ class TabuSearchService
             foreach ($scheduleClassroom['schedules'] as &$day) {
                 foreach ($day['lessons'] as $index => &$lesson) {
                     if ($lesson) {
-                        $day['lessons'][$index] = array_pop($scheduleLessonItems);
+                        $prevLesson = $day['lessons'][$index - 1];
+                        $prevLesson2 = $day['lessons'][$index - 2];
+                        if ($prevLesson2 && $prevLesson && $prevLesson2['id'] != $prevLesson2['id'] || $prevLesson && !$prevLesson2) {
+                            $nextLessonIndex  = $this->findIndexByKeyValue($scheduleLessonItems, 'id', $prevLesson['id']);
+                            if ($nextLessonIndex != -1) {
+                                $day['lessons'][$index] = $scheduleLessonItems[$nextLessonIndex];
+                                $scheduleLessonItems = array_splice($scheduleLessonItems, $nextLessonIndex, 1);
+                            }
+                        } else {
+                            $day['lessons'][$index] = array_pop($scheduleLessonItems);
+                        }
                     }
                 }
             }
         }
 
         return $scheduleClassrooms;
+    }
+
+    private function findIndexByKeyValue($array, $key, $value)
+    {
+        foreach ($array as $index => $object) {
+            if (isset($object[$key]) && $object[$key] == $value) {
+                return $index;
+            }
+        }
+        return -1;
     }
 
     public function evaluateSchedules($scheduleClassrooms)
