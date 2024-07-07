@@ -17,7 +17,6 @@ class TabuSearchController extends Controller
 
     public function search(CreateTabuSearchValidation $request)
     {
-        set_time_limit(3600);
 
         $inputData = $request->validated();
 
