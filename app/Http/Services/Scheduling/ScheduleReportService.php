@@ -72,20 +72,20 @@ class ScheduleReportService
     {
         $role = Role::where('name', 'Guru')->first();
         $teachers = Profile::where('role_id', $role->id)->get()->toArray();
-
+        $classrooms = Classroom::orderBy('name', 'asc')->get()->toArray();
+        $scheduleDays = ScheduleDay::orderBy('order_direction', 'asc')->get()->toArray();
+        $data = json_decode($data);
 
         foreach ($teachers as &$teacher) {
-            $classrooms = Classroom::orderBy('name', 'asc')->get()->toArray();
-            $teacher['classrooms'] = $classrooms;
+            $teacher['classrooms'] = $this->deepClone($classrooms);
 
             foreach ($teacher['classrooms'] as &$classroom) {
-                $scheduleDays = ScheduleDay::orderBy('order_direction', 'asc')->get()->toArray();
-                $classroom['schedules'] = $scheduleDays;
+                $classroom['schedules'] = $this->deepClone($scheduleDays);
 
                 foreach ($classroom['schedules'] as &$day) {
                     $day['lessons'] = [];
                     for ($i = 0; $i < $day['total_hours']; $i++) {
-                        $day['lessons'][] = $this->findLessonFromData(json_decode($data), $classroom['id'], $teacher['id'], $day['id'], $i);
+                        $day['lessons'][] = $this->findLessonFromData($data, $classroom['id'], $teacher['id'], $day['id'], $i);
                     }
                 }
             }
@@ -117,5 +117,10 @@ class ScheduleReportService
         $report->delete();
 
         return $this->resultResponse('success', 'Data berhasil dihapus', 200, $report);
+    }
+
+    public function deepClone($array)
+    {
+        return unserialize(serialize($array));
     }
 }
