@@ -237,9 +237,26 @@ export default {
                     v-for="classrooms in [getClassrooms(day.id, hour)]"
                     :class="classrooms.length > 1 ? 'constraint-error' : ''"
                   >
-                    {{
-                      classrooms.map((classroom) => classroom.name).join(', ')
-                    }}
+                    <div class="classroom">
+                      <div v-for="(classroom, index) in classrooms">
+                        <span>
+                          {{ classroom.name }}
+                        </span>
+                        <span>
+                          {{
+                            classroom.schedules.find(
+                              (schedule) => schedule.id === day.id
+                            )?.lessons[hour - 1]?.lesson?.name
+                          }}
+                        </span>
+                        <hr
+                          v-if="
+                            classrooms.length > 1 &&
+                            index !== classrooms.length - 1
+                          "
+                        />
+                      </div>
+                    </div>
                   </td>
                 </template>
               </tr>
@@ -327,5 +344,16 @@ tbody tr:hover {
 }
 .select-teacher {
   scale: 0.7;
+}
+.classroom {
+  display: flex;
+  flex-direction: column;
+}
+.classroom > div {
+  display: flex;
+  flex-direction: column;
+}
+.classroom hr {
+  border: 1px solid white;
 }
 </style>
