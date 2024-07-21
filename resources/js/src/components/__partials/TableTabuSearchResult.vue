@@ -72,7 +72,6 @@ export default {
                 hour?.schedule_day_id === day.id && hour?.started_at === i + 1
             )
             day.hours[i] = newHour
-            console.log(newHour)
           }
           i += 1
         }
