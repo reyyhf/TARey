@@ -108,7 +108,11 @@ export default {
           "
         >
           <tr>
-            <td :rowspan="day.hours.length + 1">{{ day.name }}</td>
+            <td :rowspan="day.hours.length + 1">
+              <div class="day">
+                {{ day.name.replace("'", '') }}
+              </div>
+            </td>
           </tr>
           <tr v-for="hour in day.hours">
             <td>
@@ -304,5 +308,15 @@ tbody tr:hover {
 }
 .duration {
   font-size: 11px;
+}
+.day {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
 }
 </style>
