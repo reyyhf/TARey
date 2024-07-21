@@ -1,5 +1,5 @@
 <script>
-import { dragscroll } from 'vue-dragscroll';
+import { dragscroll } from 'vue-dragscroll'
 
 export default {
   name: 'TableTabuSearchResult',
@@ -99,6 +99,7 @@ export default {
         </tr>
       </thead>
       <tbody>
+        <tr></tr>
         <template
           v-for="day in days"
           v-if="
@@ -113,9 +114,13 @@ export default {
             <td>
               <div class="hour">
                 <span> {{ hour?.started_at }}</span>
-                <span class="duration">
-                  {{ hour?.started_duration }} - {{ hour?.ended_duration }}
-                </span>
+                <div>
+                  <span style="opacity: 0">&nbsp;( </span>
+                  <span class="duration">
+                    {{ hour?.started_duration }} - {{ hour?.ended_duration }}
+                  </span>
+                  <span style="opacity: 0">)</span>
+                </div>
               </div>
             </td>
             <template v-for="classroom in classrooms">
