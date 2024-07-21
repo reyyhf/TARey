@@ -185,7 +185,7 @@ export default {
         </div>
       </template>
 
-      <div class="table-schedule" v-dragscroll ref="tableTabuSearch">
+      <div class="table-schedule" ref="tableTabuSearch">
         <table-tabu-search
           v-if="tabuSearchResult"
           :tabuSearchResult="tabuSearchResult"

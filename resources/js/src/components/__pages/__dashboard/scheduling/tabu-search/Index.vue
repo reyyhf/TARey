@@ -113,7 +113,7 @@ export default {
           </v-btn>
         </div>
       </template>
-      <div class="table-schedule" v-dragscroll>
+      <div class="table-schedule">
         <table-tabu-search
           v-if="scheduleDays.length && tabuSearchResult"
           :tabuSearchResult="tabuSearchResult"

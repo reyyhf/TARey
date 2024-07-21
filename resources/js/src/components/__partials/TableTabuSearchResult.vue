@@ -1,5 +1,4 @@
 <script>
-import { mapActions } from 'vuex'
 import { dragscroll } from 'vue-dragscroll'
 
 export default {
@@ -25,25 +24,58 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      fetchDays: 'scheduleDay/fetchScheduleDay',
-    }),
     closeModal() {
       this.showModal = false
     },
+    getLesson(classroom, dayId, hourId) {
+      if (!hourId) return
+
+      const schedule = classroom.schedules.find(
+        (schedule) => schedule.id === dayId
+      )
+      const lesson = schedule.lessons.find(
+        (lesson) => lesson?.hour?.id === hourId
+      )
+
+      return lesson
+    },
   },
-  mounted() {
-    this.fetchDays()
-      .then((result) => {
-        this.scheduleDays = result.data.data
+  computed: {
+    days() {
+      if (!this.tabuSearchResult) return []
+      const allSchedules = this.tabuSearchResult.result
+        .flatMap((result) => result.schedules)
+        .slice(0, 5)
+      return [
+        ...new Set(
+          allSchedules.map((schedule) => ({
+            id: schedule.id,
+            name: schedule.name,
+            total_hours: schedule.total_hours,
+            hours: schedule.lessons.map((lesson) => lesson?.hour),
+          }))
+        ),
+      ]
+    },
+    classrooms() {
+      if (!this.tabuSearchResult) return []
+      const romanToInt = {
+        X: 10,
+        XI: 11,
+        XII: 12,
+      }
+      return this.tabuSearchResult.result.sort((a, b) => {
+        const [gradeA, typeA, numberA] = a.classroom.name.split(' ')
+        const [gradeB, typeB, numberB] = b.classroom.name.split(' ')
+
+        if (typeA !== typeB) return typeA.localeCompare(typeB)
+
+        const gradeDiff = romanToInt[gradeA] - romanToInt[gradeB]
+        if (gradeDiff !== 0) return gradeDiff
+
+        return parseInt(numberA) - parseInt(numberB)
       })
-      .catch((err) => {
-        this?.$refs?.alert?.show(
-          result?.data?.meta?.status,
-          result?.data?.meta?.message
-        )
-        console.log(err)
-      })
+    },
   },
   directives: {
     dragscroll,
@@ -53,130 +85,129 @@ export default {
 
 <template>
   <div class="table-schedule" v-dragscroll>
-    <table v-if="scheduleDays.length && tabuSearchResult">
+    <table v-if="classrooms">
       <thead>
         <tr>
-          <th rowspan="3">Kelas</th>
+          <th rowspan="3">Hari</th>
+          <th rowspan="3">Jam</th>
+          <th :colspan="classrooms.length + 1">Kelas</th>
         </tr>
         <tr>
-          <th
-            v-for="day in scheduleDays"
-            :colspan="day.total_hours"
-            v-if="
-              (day.order_direction === new Date().getDay() && onlyToday) ||
-              !onlyToday
-            "
-          >
-            {{ day.name }}
+          <th v-for="classroom in classrooms">
+            {{ classroom.classroom.name }}
           </th>
-        </tr>
-        <tr>
-          <template
-            v-for="day in scheduleDays"
-            v-if="
-              (day.order_direction === new Date().getDay() && onlyToday) ||
-              !onlyToday
-            "
-          >
-            <th
-              colspan="1"
-              class="text-center border"
-              v-for="i in day.total_hours"
-            >
-              {{ i }}
-            </th>
-          </template>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="result in tabuSearchResult?.result">
-          <td>
-            {{ result.classroom.name }}
-          </td>
-          <template
-            v-for="day in result.schedules"
-            v-if="
-              (day.order_direction === new Date().getDay() && onlyToday) ||
-              !onlyToday
-            "
-          >
-            <td
-              v-ripple
-              colspan="1"
-              v-for="lesson in day.lessons"
-              :class="`text-center border ${
-                lesson?.score ? 'constraint-error' : ''
-              }`"
-            >
-              <v-dialog
-                :value="selectedLesson === lesson && lesson !== null"
-                width="500"
-                v-if="lesson !== null"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <div
-                    v-if="lesson"
-                    class="lesson"
-                    @click="selectedLesson = lesson"
-                    v-on="on"
-                    v-bind="attrs"
-                  >
-                    <span class="font-weight-bold">
-                      {{ lesson.lesson.acronym }}</span
-                    >
-                    <span> &nbsp;({{ lesson.teacher.name }})</span>
-                  </div>
-                </template>
-
-                <v-card>
-                  <v-card-title class="font-weight-bold"> Detail </v-card-title>
-                  <v-card-text>
-                    <input-component
-                      :value="lesson.lesson.name"
-                      icon="account"
-                      type="text"
-                      label="Mata Pelajaran"
-                      readonly
-                    />
-                    <input-component
-                      :value="`${lesson.hour.started_duration}-${lesson.hour.ended_duration}`"
-                      icon="account"
-                      type="text"
-                      :label="`Jam Ke-${lesson.hour.started_at}`"
-                      readonly
-                    />
-                    <input-component
-                      :value="`${lesson.teacher.name} (${lesson.teacher.nuptk})`"
-                      icon="account"
-                      type="text"
-                      label="Nama Pengajar"
-                      readonly
-                    />
-                    <v-alert
-                      border="top"
-                      color="red"
-                      dark
-                      v-if="lesson.errors?.length"
-                    >
-                      <ul>
-                        <li v-for="error in lesson.errors">{{ error }}</li>
-                      </ul>
-                    </v-alert>
-                  </v-card-text>
-
-                  <v-divider></v-divider>
-
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="selectedLesson = null">
-                      Close
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
+        <template
+          v-for="day in days"
+          v-if="
+            (day.order_direction === new Date().getDay() && onlyToday) ||
+            !onlyToday
+          "
+        >
+          <tr>
+            <td :rowspan="day.hours.length + 1">{{ day.name }}</td>
+          </tr>
+          <tr v-for="hour in day.hours">
+            <td>
+              <div class="hour">
+                <span> {{ hour?.started_at }}</span>
+                <span class="duration">
+                  {{ hour?.started_duration }} - {{ hour?.ended_duration }}
+                </span>
+              </div>
             </td>
-          </template>
-        </tr>
+            <template v-for="classroom in classrooms">
+              <td
+                v-for="lesson in [getLesson(classroom, day.id, hour?.id)]"
+                v-ripple
+                :class="`text-center border ${
+                  lesson?.score ? 'constraint-error' : ''
+                }`"
+              >
+                <v-dialog
+                  :value="selectedLesson === lesson && lesson !== null"
+                  width="500"
+                  v-if="lesson"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <div
+                      v-if="lesson"
+                      class="lesson"
+                      @click="selectedLesson = lesson"
+                      v-on="on"
+                      v-bind="attrs"
+                    >
+                      <span class="font-weight-bold">
+                        {{ lesson.lesson.acronym }}</span
+                      >
+                      <span> &nbsp;({{ lesson.teacher.name }})</span>
+                    </div>
+                  </template>
+                  <v-card>
+                    <v-card-title class="font-weight-bold">
+                      Detail
+                    </v-card-title>
+                    <v-card-text>
+                      <input-component
+                        :value="classroom.classroom.name"
+                        icon="account"
+                        type="text"
+                        label="Kelas"
+                        readonly
+                      />
+                      <input-component
+                        :value="lesson.lesson.name"
+                        icon="account"
+                        type="text"
+                        label="Mata Pelajaran"
+                        readonly
+                      />
+                      <input-component
+                        :value="`${lesson.hour.started_duration}-${lesson.hour.ended_duration}`"
+                        icon="account"
+                        type="text"
+                        :label="`Jam Ke-${lesson.hour.started_at}`"
+                        readonly
+                      />
+                      <input-component
+                        :value="`${lesson.teacher.name} (${lesson.teacher.nuptk})`"
+                        icon="account"
+                        type="text"
+                        label="Nama Pengajar"
+                        readonly
+                      />
+                      <v-alert
+                        border="top"
+                        color="red"
+                        dark
+                        v-if="lesson.errors?.length"
+                      >
+                        <ul>
+                          <li v-for="error in lesson.errors">{{ error }}</li>
+                        </ul>
+                      </v-alert>
+                    </v-card-text>
+
+                    <v-divider></v-divider>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="primary"
+                        text
+                        @click="selectedLesson = null"
+                      >
+                        Close
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </td>
+            </template>
+          </tr>
+        </template>
       </tbody>
     </table>
     <div v-else class="text-center">Mulai proses untuk menampilkan data</div>
@@ -197,6 +228,7 @@ export default {
 table {
   overflow-x: hidden;
   border-radius: 16px;
+  min-width: 100%;
 }
 td {
   min-width: 100px;
@@ -259,5 +291,13 @@ tbody tr:hover {
 .constraint-error {
   background-color: #f34545;
   color: white;
+}
+.hour {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.duration {
+  font-size: 11px;
 }
 </style>
