@@ -43,19 +43,44 @@ export default {
   computed: {
     days() {
       if (!this.tabuSearchResult) return []
-      const allSchedules = this.tabuSearchResult.result
-        .flatMap((result) => result.schedules)
-        .slice(0, 5)
-      return [
+      const allSchedules = this.tabuSearchResult.result.flatMap(
+        (result) => result.schedules
+      )
+      const allHours = allSchedules
+        .flatMap((schedule) => schedule.lessons)
+        .map((lesson) => lesson?.hour)
+
+      const days = [
         ...new Set(
-          allSchedules.map((schedule) => ({
-            id: schedule.id,
-            name: schedule.name,
-            total_hours: schedule.total_hours,
-            hours: schedule.lessons.map((lesson) => lesson?.hour),
-          }))
+          allSchedules
+            .map((schedule) => ({
+              id: schedule.id,
+              name: schedule.name,
+              total_hours: schedule.total_hours,
+              hours: schedule.lessons.map((lesson) => lesson?.hour),
+            }))
+            .slice(0, 5)
         ),
       ]
+
+      console.log(allHours)
+
+      for (const day of days) {
+        let i = 0
+        for (const hour of day.hours) {
+          if (!hour) {
+            const newHour = allHours.find(
+              (hour) =>
+                hour?.schedule_day_id === day.id && hour?.started_at === i + 1
+            )
+            day.hours[i] = newHour
+            console.log(newHour)
+          }
+          i += 1
+        }
+      }
+
+      return days
     },
     classrooms() {
       if (!this.tabuSearchResult) return []
