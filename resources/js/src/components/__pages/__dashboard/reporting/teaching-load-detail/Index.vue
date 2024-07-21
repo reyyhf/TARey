@@ -142,6 +142,18 @@ export default {
         URL.revokeObjectURL(url)
       })
     },
+    getClassrooms(dayId, hour) {
+      if (!dayId || !hour || !this.teacherId) return []
+      const teacher = this.data.data_teaching_weight.find(
+        (teacher) => teacher.id === this.teacherId
+      )
+      const classrooms = teacher.classrooms.filter((classroom) => {
+        return classroom.schedules.some((schedule) => {
+          return schedule.id === dayId && !!schedule.lessons[hour - 1]
+        })
+      })
+      return classrooms
+    },
   },
   mounted() {
     this.fetchDays()
@@ -170,6 +182,19 @@ export default {
     >
       <template v-slot:action>
         <div class="actions">
+          <auto-complete-component
+            v-model="teacherId"
+            label="Guru"
+            itemName="name"
+            icon="notebook-check"
+            :originData="teachers"
+            itemValue="profile_id"
+            :multiple="false"
+            :withChips="false"
+            class="select-teacher"
+            density="compact"
+          >
+          </auto-complete-component>
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn outlined color="primary" dark v-bind="attrs" v-on="on">
@@ -191,47 +216,30 @@ export default {
         </div>
       </template>
       <div class="table-schedule" ref="tableTabuSearch" v-dragscroll>
-        <table v-if="scheduleDays.length">
+        <table v-if="days && teacherId">
           <thead>
             <tr>
-              <th rowspan="3">Pengajar</th>
-              <th rowspan="3">Kelas</th>
+              <th rowspan="2">Hari</th>
+              <th :colspan="maxTotalHours">Jam Pelajaran</th>
             </tr>
             <tr>
-              <th v-for="day in scheduleDays" :colspan="day.total_hours">
-                {{ day.name }}
+              <th v-for="hour in maxTotalHours">
+                {{ hour }}
               </th>
-            </tr>
-            <tr>
-              <template v-for="day in scheduleDays">
-                <th
-                  colspan="1"
-                  class="text-center border"
-                  v-for="i in day.total_hours"
-                >
-                  {{ i }}
-                </th>
-              </template>
             </tr>
           </thead>
           <tbody>
-            <template v-for="teacher in data.data_teaching_weight">
-              <tr>
-                <td
-                  :rowspan="teacher.classrooms.length + 1"
-                  v-ripple
-                  style="background-color: #e8f5e9"
-                >
-                  {{ teacher.name }}
-                </td>
-              </tr>
-              <tr v-for="classroom in teacher.classrooms">
-                <td v-ripple style="background-color: #f0f4c3">
-                  {{ classroom.name }}
-                </td>
-                <template v-for="days in classroom.schedules">
-                  <td v-for="lesson in days.lessons" v-ripple>
-                    {{ lesson?.lesson?.name }}
+            <template v-for="day in days">
+              <tr :rowspan="day.total_hours">
+                <td>{{ day.name }}</td>
+                <template v-for="hour in maxTotalHours">
+                  <td
+                    v-for="classrooms in [getClassrooms(day.id, hour)]"
+                    :class="classrooms.length > 1 ? 'constraint-error' : ''"
+                  >
+                    {{
+                      classrooms.map((classroom) => classroom.name).join(', ')
+                    }}
                   </td>
                 </template>
               </tr>
@@ -254,6 +262,7 @@ export default {
 table {
   overflow-x: hidden;
   border-radius: 16px;
+  min-width: 100%;
 }
 td {
   min-width: 100px;
@@ -294,7 +303,6 @@ table {
 .actions {
   display: flex;
   justify-content: end;
-  gap: 16px;
   align-items: center;
 }
 td:not(.lesson),
@@ -316,5 +324,8 @@ tbody tr:hover {
 .constraint-error {
   background-color: #f34545;
   color: white;
+}
+.select-teacher {
+  scale: 0.7;
 }
 </style>
