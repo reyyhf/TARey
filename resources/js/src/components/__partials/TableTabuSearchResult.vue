@@ -1,5 +1,5 @@
 <script>
-import { dragscroll } from 'vue-dragscroll'
+import { dragscroll } from 'vue-dragscroll';
 
 export default {
   name: 'TableTabuSearchResult',
