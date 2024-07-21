@@ -63,8 +63,6 @@ export default {
         ),
       ]
 
-      console.log(allHours)
-
       for (const day of days) {
         let i = 0
         for (const hour of day.hours) {
