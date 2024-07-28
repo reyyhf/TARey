@@ -8,6 +8,11 @@ import html2canvas from 'html2canvas'
 export default {
   name: 'TeachingLoadReportDetail',
   mixins: [scheduleReportDetailMixin],
+  data() {
+    return {
+      isList: false,
+    }
+  },
   methods: {
     downloadPdf() {
       const table = this.$refs.tableTabuSearch.getElementsByTagName('table')[0]
@@ -155,18 +160,32 @@ export default {
       return classrooms
     },
   },
-  mounted() {
-    this.fetchDays()
-      .then((result) => {
-        this.days = result.data.data
-      })
-      .catch((err) => {
-        this?.$refs?.alert?.show(
-          result?.data?.meta?.status || 'error',
-          result?.data?.meta?.message || 'error'
+  computed: {
+    teacherLessons() {
+      if (!this.teacherId) return []
+      const teacher = this.data.data_teaching_weight.find(
+        (teacher) => teacher.id === this.teacherId
+      )
+      const lessons = teacher?.classrooms?.reduce((allLessons, classroom) => {
+        const lessons = classroom.schedules.reduce(
+          (lessonInSchedule, schedule) => {
+            const lessons = schedule.lessons
+              .filter((lesson) => !!lesson)
+              .map((lesson) => ({
+                lesson,
+                schedule,
+                classroom,
+              }))
+
+            return [...lessonInSchedule, ...lessons]
+          },
+          []
         )
-        console.log(err)
-      })
+
+        return [...allLessons, ...lessons]
+      }, [])
+      return lessons
+    },
   },
   directives: {
     dragscroll,
@@ -197,7 +216,14 @@ export default {
           </auto-complete-component>
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn outlined color="primary" dark v-bind="attrs" v-on="on">
+              <v-btn
+                outlined
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+                style="margin-left: -24px"
+              >
                 <v-icon left> mdi-content-save-plus </v-icon>
                 Download
               </v-btn>
@@ -213,9 +239,26 @@ export default {
               </v-list-item>
             </v-list>
           </v-menu>
+          <v-btn
+            outlined
+            color="primary"
+            dark
+            icon
+            v-bind="attrs"
+            v-on="on"
+            style="margin-left: 16px"
+            @click="isList = !isList"
+          >
+            <v-icon v-if="isList"> mdi mdi-format-list-bulleted </v-icon>
+            <v-icon v-else> mdi mdi-calendar-month-outline </v-icon>
+          </v-btn>
         </div>
       </template>
-      <div class="table-schedule" ref="tableTabuSearch" v-dragscroll>
+      <div
+        :class="isList ? 'd-none' : 'table-schedule'"
+        ref="tableTabuSearch"
+        v-dragscroll
+      >
         <table v-if="days && teacherId">
           <thead>
             <tr>
@@ -264,6 +307,36 @@ export default {
           </tbody>
         </table>
       </div>
+      <div :class="isList ? '' : 'd-none'">
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">No</th>
+                <th class="text-left">Hari</th>
+                <th class="text-left">Akronim</th>
+                <th class="text-left">Nama</th>
+                <th class="text-left">Kelas</th>
+                <th class="text-left">Mulai</th>
+                <th class="text-left">Selesai</th>
+                <th class="text-left">Jumlah</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(teacherLesson, index) in teacherLessons">
+                <td>{{ index + 1 }}</td>
+                <td>{{ teacherLesson.schedule.name }}</td>
+                <td>{{ teacherLesson.lesson.lesson.acronym }}</td>
+                <td>{{ teacherLesson.lesson.lesson.name }}</td>
+                <td>{{ teacherLesson.classroom.name }}</td>
+                <td>{{ teacherLesson.lesson.hour.started_duration }}</td>
+                <td>{{ teacherLesson.lesson.hour.ended_duration }}</td>
+                <td>{{ teacherLesson.classroom.name }}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </div>
     </card-component>
   </div>
 </template>
@@ -276,24 +349,24 @@ export default {
 .table-schedule * {
   user-select: none;
 }
-table {
+.table-schedule table {
   overflow-x: hidden;
   border-radius: 16px;
   min-width: 100%;
 }
-td {
+.table-schedule td {
   min-width: 100px;
 }
-table,
-th,
-td {
+.table-schedule table,
+.table-schedule th,
+.table-schedule td {
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-spacing: 0;
   border-collapse: collapse;
   text-align: center;
 }
 
-table {
+.table-schedule table {
   border-radius: 16px;
 }
 
@@ -322,11 +395,11 @@ table {
   justify-content: end;
   align-items: center;
 }
-td:not(.lesson),
-th {
+.table-schedule td:not(.lesson),
+.table-schedule th {
   padding: 16px;
 }
-tbody tr:hover {
+.table-schedule tbody tr:hover {
   background-color: rgba(0, 0, 0, 0.02);
 }
 .lesson {
