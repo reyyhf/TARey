@@ -323,7 +323,7 @@ export default {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(teacherLesson, index) in teacherLessons">
+              <tr v-for="(teacherLesson, index) in teacherLessons.sort((a, b) => a.schedule.order_direction - b.schedule.order_direction)">
                 <td>{{ index + 1 }}</td>
                 <td>{{ teacherLesson.schedule.name }}</td>
                 <td>{{ teacherLesson.lesson.lesson.acronym }}</td>
