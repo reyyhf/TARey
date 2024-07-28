@@ -331,7 +331,7 @@ export default {
                 <td>{{ teacherLesson.classroom.name }}</td>
                 <td>{{ teacherLesson.lesson.hour.started_duration }}</td>
                 <td>{{ teacherLesson.lesson.hour.ended_duration }}</td>
-                <td>{{ teacherLesson.classroom.name }}</td>
+                <td>{{ teacherLesson.classroom.quota }}</td>
               </tr>
             </tbody>
           </template>
